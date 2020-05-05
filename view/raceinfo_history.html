@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <title>AutoraceWebService</title>
+        <!-- Googleアイコンフォントのインポート -->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!-- Materialize CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <!-- jquery -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <!-- Materialize JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <!-- モバイル向けに最適化 -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- 共通 -->
+        <link rel="stylesheet" type="text/css" href="css/common.css">
+        <script src="js/common.js"></script>
+
+        <style type="text/css">
+        </style>
+
+    </head>
+    <body>
+
+        <!-- メニュー -->
+        <a class="menu">
+            <span class="menu__line menu__line--top"></span>
+            <span class="menu__line menu__line--center"></span>
+            <span class="menu__line menu__line--bottom"></span>
+        </a>
+        <div class="gnav">
+            <div class="gnav__wrap">
+                <ul class="gnav__menu">
+                    <li class="gnav__menu__item"><a href="toppage.html">Top</a></li>
+                    <li class="gnav__menu__item"><a href="raceinfo.html">RaceInfo</a></li>
+                    <li class="gnav__menu__item"><a href="raceinfo_history.html">RaceInfoHistory</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="hero"></div>
+        <!-- メニュー -->
+
+        <!-- メイン -->
+        <!-- Element Showed -->
+        <div>
+            <a id="menu" class="waves-effect waves-light btn btn-floating red lighten-3" style="margin:10px 0 0 10px;" onclick="$('.tap-target').tapTarget('open')" ><i class="material-icons">help</i></a>
+        </div>
+        <!-- Tap Target Structure -->
+        <div class="tap-target" data-target="menu">
+            <div class="tap-target-content">
+                <h5>RaceInfoHistory</h5>
+                <p>過去レース情報検索</p>
+                <p>日付、場所、Rで過去レース情報が検索できます。</p>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- 検索フォーム -->
+            <div class="row" style="margin-top: 5%;">
+                <div class="col s12 m4">
+                    <label>Date</label>
+                    <input id="inputDated" type="text" class="datepicker" style="height: 2.5rem;"></input>
+                </div>
+
+                <div class="input-field col s4 m3">
+                    <select id="inputPlace">
+                        <option Value=""></option>
+                        <option Value="isesaki">isesaki</option>
+                        <option Value="kawaguchi">kawaguchi</option>
+                        <option Value="hamamatsu">hamamatsu</option>
+                        <option Value="iizuka">iizuka</option>
+                        <option Value="sanyou">sanyou</option>
+                    </select>
+                    <label>Place</label>
+                </div>
+
+                <div class="input-field col s4 m2">
+                    <select id="inputRound">
+                        <option Value=""></option>
+                        <option Value="1">1</option>
+                        <option Value="2">2</option>
+                        <option Value="3">3</option>
+                        <option Value="4">4</option>
+                        <option Value="5">5</option>
+                        <option Value="6">6</option>
+                        <option Value="7">7</option>
+                        <option Value="8">8</option>
+                        <option Value="9">9</option>
+                        <option Value="10">10</option>
+                        <option Value="11">11</option>
+                        <option Value="12">12</option>
+                    </select>
+                    <label>Round</label>
+                </div>
+
+                <button id="btnSearch" class="col s4 offset-m1 m2 btn waves-effect red lighten-2" style="margin-top: 25px;">検索</button>
+            </div>
+
+            <!-- レースヘッダー -->
+            <table id="race_head" class="centered responsive-table from_json_to_table" style="margin-top: 30px;"></table>
+            <!-- レース情報 -->
+            <table id="race_info" class="centered responsive-table from_json_to_table" style="margin-top: 45px;"></table>
+            <!-- レース結果 -->
+            <table id="race_result" class="centered responsive-table from_json_to_table" style="margin-top: 45px;"></table>
+        <!-- メイン -->
+
+        <script>
+
+            // 初期設定
+            $(function () {
+                // materialize
+                $('.datepicker').datepicker({
+                    format: "yyyy-mm-dd"
+                });
+                $('select').formSelect();
+                $('.tap-target').tapTarget();
+                $('.tap-target').tapTarget('open')
+                $(".tap-target-wrapper").css('position', 'fixed');
+                // メニュー
+                setting_menu()
+            });
+
+            // 検索
+            var json;
+            $(function () {
+                $("#btnSearch").click(function (e) {
+                    nowDate = new Date();
+                    nowDate.setDate(nowDate.getDate() - 1)
+                    if ($("#inputDated").val() == "" || $("#inputPlace").val() == "" || $("#inputRound").val() == "") {
+                        alert("検索条件を入力してください。");
+                    }else if ( new Date( $("#inputDated").val() + " 00:00:00" ) > nowDate ) {
+                        alert("過去日を入力してください。");
+                    }else{
+                        // レース情報取得
+                        $.ajax({
+                            url:'https://ntg3gua04h.execute-api.ap-northeast-1.amazonaws.com/prod/raceinfo/history',
+                            type:'GET',
+                            data:{
+                                'dated':$('#inputDated').val(),
+                                'place':$('#inputPlace').val(),
+                                'round':$('#inputRound').val()
+                            }
+                        })
+                        .done( (response) => {
+                            json = response;
+                            $("#race_head").empty();
+                            $("#race_head").append(from_json_to_table(response["race_head"]));
+                            $("#race_info").empty();
+                            $("#race_info").append(from_json_to_table(response["race_info"]));
+                            $("#race_result").empty();
+                            $("#race_result").append(from_json_to_table(response["race_result"]));
+                        })
+                        .fail( (response) => {
+                            if (response["status"] == 0){
+                                alert("error!");
+                            }else{
+                                alert(response["responseJSON"]);
+                            }
+                        })
+                        .always( (response) => {
+                        });
+                    }
+                });
+            });
+
+        </script>
+    </body>
+</html>

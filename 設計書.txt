@@ -1,0 +1,64 @@
+■画面
+toppage.html
+raceinfo.html
+raceinfo_history.html
+anaylize.html
+startboard.html
+odds_monitor.html
+
+■フォルダ構成
+AutoraceWebService
+    api
+        get_raceinfo.py
+        get_raceinfo_history.py
+        get_anaylize.py
+        get_odds.py
+    batch
+        daily.py（日次でスケジュール）
+    module（自作モジュール置き場）
+        dbaccess.py（DBアクセス（psycopg2）クラス）
+        scraping.py（スクレイピング（bs）クラス）
+        anaylize.py（分析（sklearn）クラス）
+        awsmanagement.py（s3操作クラス、rds操作クラス）
+        message.py（メッセージクラス）
+        sql.py（SQLクラス）
+    packages（外部モジュール置き場）
+        psycopg2
+        bs4
+        sklearn
+        requests
+    (view)
+
+■API構成
+raceinfo
+    └ get（get_raceinfo.py）
+    history
+        └ get（get_raceinfo_history.py）
+anaylize
+    └ get（get_anaylize.py）
+odds
+    └ get（get_odds.py）
+
+■テーブル一覧
+マスタ系
+・m_racer　（t_race_racerに所属入れてできれば消したい）
+表示用トラン
+・t_race_head
+・t_race_racer　（t_race_infoに変えたい）（所属もここに入れたい）（ランクいらない）
+・t_race_result　（3連単複と2連単複のデータが逆）
+分析用トラン
+・t_race_racer2　（t_racerに変えたい）
+・t_hande
+・t_trialrun
+・t_racetime
+・t_starttime
+・t_position
+・t_deviation　（データ取り直すなら作る）
+・t_represent　（データ取り直すなら作る）
+表示用ワーク
+・w_race_head
+・w_race_racer　（w_race_infoに変えたい）（positionいらない）
+分析用ワーク
+・w_anaylize
+オッズ用ワーク
+・w_odds
