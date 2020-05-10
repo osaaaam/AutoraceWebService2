@@ -98,6 +98,58 @@
                 <button id="btnSearch" class="col s4 offset-m1 m2 btn waves-effect red lighten-2" style="margin-top: 25px;">検索</button>
             </div>
 
+            <!-- preloader -->
+            <div id="preloader" class="row" style="display: none;">
+                <div class="col offset-s9 s3 offset-m11 m1">
+                    <div class="preloader-wrapper active">
+                        <div class="spinner-layer spinner-blue">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="gap-patch">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="circle-clipper right">
+                                <div class="circle"></div>
+                            </div>
+                        </div>
+                        <div class="spinner-layer spinner-red">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="gap-patch">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="circle-clipper right">
+                                <div class="circle"></div>
+                            </div>
+                        </div>
+                        <div class="spinner-layer spinner-yellow">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="gap-patch">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="circle-clipper right">
+                                <div class="circle"></div>
+                            </div>
+                        </div>
+                        <div class="spinner-layer spinner-green">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="gap-patch">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="circle-clipper right">
+                                <div class="circle"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- レースヘッダー -->
             <table id="race_head" class="centered responsive-table from_json_to_table" style="margin-top: 30px;"></table>
             <!-- レース情報 -->
@@ -135,6 +187,7 @@
                         $("#race_head").empty();
                         $("#race_info").empty();
                         $("#race_result").empty();
+                        $("#preloader").css('display','');
                         // レース情報取得
                         $.ajax({
                             url:'https://ntg3gua04h.execute-api.ap-northeast-1.amazonaws.com/prod/raceinfo/history',
@@ -158,6 +211,7 @@
                             }
                         })
                         .always( (response) => {
+                            $("#preloader").css('display','none');
                         });
                     }
                 });

@@ -76,9 +76,9 @@ odds
 ・w_anaylize
 オッズ用ワーク
 ・w_odds
+本日実施場ワーク
+・w_place
 
 
 ■タスク
-・処理中画面
 ・レース場DDLの動的生成
-・sqlの命名
