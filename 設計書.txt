@@ -51,6 +51,9 @@ anaylize
     └ get（get_anaylize.py）
 odds
     └ get（get_odds.py）
+common
+    place
+        └ get（get_place.py）
 
 
 ■テーブル一覧
@@ -78,7 +81,3 @@ odds
 ・w_odds
 本日実施場ワーク
 ・w_place
-
-
-■タスク
-・レース場DDLの動的生成

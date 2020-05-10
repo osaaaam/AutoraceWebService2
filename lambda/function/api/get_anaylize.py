@@ -12,10 +12,9 @@ from module import sql
 def scraped_insert(db_client, l_race_key):
     url = scraping.Scraping.url_program
     scraping_client = scraping.Scraping(url, [l_race_key[0]], [l_race_key[1]], [l_race_key[2]])
-    scraping_client.get_raceinfo_url_program()
+    scraping_client.get_raceinfo_by_url_program()
     # スクレイピング結果が格納されていなかった場合、エラー
-    l_scraped_data = scraping_client.out_lists_header[0]
-    if len(l_scraped_data) == 0:
+    if len(scraping_client.out_lists_header[0]) == 0:
         return False
     else:
         # ヘッダー情報をDBへINSERT

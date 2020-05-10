@@ -66,12 +66,6 @@
 
                 <div class="input-field col s4 m3">
                     <select id="inputPlace">
-                        <option Value=""></option>
-                        <option Value="isesaki">isesaki</option>
-                        <option Value="kawaguchi">kawaguchi</option>
-                        <option Value="hamamatsu">hamamatsu</option>
-                        <option Value="iizuka">iizuka</option>
-                        <option Value="sanyou">sanyou</option>
                     </select>
                     <label>Place</label>
                 </div>
@@ -157,7 +151,6 @@
         <!-- メイン -->
 
         <script>
-
             // 初期設定
             $(function () {
                 // materialize
@@ -170,11 +163,10 @@
                 $('.tap-target').tapTarget();
                 $('.tap-target').tapTarget('open')
                 $(".tap-target-wrapper").css('position', 'fixed');
-                // 今日をセット
-                // let picker = $('.datepicker').pickadate().pickadate('picker')
-                // picker.set('select', '2016-04-20', { format: 'yyyy-mm-dd' })
                 // メニュー
-                setting_menu()
+                setting_menu();
+                // inputPlaceドロップダウン動的生成
+                setting_place();
             });
 
             // 検索

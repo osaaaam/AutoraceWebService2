@@ -1,6 +1,11 @@
 class Sql:
 
     # 画面表示用 SQL
+    select_W_PLACE_by_dated = " SELECT wp.place レース場 "\
+                              "   FROM auto.w_place wp "\
+                              "  WHERE wp.dated = %s "
+
+    # 画面表示用 SQL
     select_T_RACE_HEAD_for_view = " SELECT rh.race_name レース "\
                                     "       ,rh.distance 距離 "\
                                     "       ,rh.weather 天候 "\
@@ -65,6 +70,13 @@ class Sql:
                                      "    AND rr.place = %s "\
                                      "    AND rr.round = %s "\
                                      "  ORDER BY rr.car_no "
+
+    # 挿入 SQL
+    insert_W_PLACE = " INSERT INTO auto.w_place ( "\
+                         "     dated, "\
+                         "     place "\
+                         " ) "\
+                         " VALUES (%s, %s) "
 
     # 挿入 SQL
     insert_W_RACE_HEAD = " INSERT INTO auto.w_race_head ( "\

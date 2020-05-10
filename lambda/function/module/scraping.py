@@ -11,12 +11,12 @@ class Scraping:
     # インスタンス変数のセットと、スクレイピングの実行
     # 複数urlのスクレイピングも考慮
     def __init__(self, url_, l_dated, l_place, l_round):
-        self.l_race_key = []
+        self.l_l_race_key = []
         self.l_soup = []
         for dated in l_dated:
             for place in l_place:
                 for round in l_round:
-                    self.l_race_key.append([dated, place, round])
+                    self.l_l_race_key.append([dated, place, round])
                     url = url_.format(place, dated, round)
                     html = requests.get(url)
                     self.l_soup.append(BeautifulSoup(html.text,"html.parser"))
@@ -85,7 +85,7 @@ class Scraping:
 
     # スクレイピング結果からレース情報を取得する
     # エラーになった場合は、[]を格納
-    def get_raceinfo_url_program(self):
+    def get_raceinfo_by_url_program(self):
         # 結果格納用
         self.out_lists_header = []
         self.out_lists_racer = []
@@ -132,3 +132,27 @@ class Scraping:
                 self.out_lists_trialrun.append([])
                 self.out_lists_deviation.append([])
                 self.out_lists_position.append([])
+
+
+    # スクレイピング結果からレース場を取得する
+    # エラーになった場合は、[]を格納
+    def get_place_by_url_program(self):
+        # 結果格納用
+        self.out_list_place = []
+        # まずはスクレイピングした分のレース場をセット
+        for l_race_key in self.l_l_race_key:
+            self.out_list_place.append(l_race_key[1])
+        # 次に開催してないレース場を削除していく
+        try:
+            for i in range(len(self.l_soup)):
+                soup = self.l_soup[i]
+                #divタグのid=tabs3で検索
+                soup = soup.find_all("div", id="tabs3")
+                for tag in soup:
+                    # あったら開催してないため、そのレース場を削除
+                    self.out_list_place.remove(self.l_l_race_key[i][1])
+
+        except Exception as e:
+            print(str(e))
+            # []を格納
+            self.out_list_place = []
