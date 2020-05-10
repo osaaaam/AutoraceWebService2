@@ -19,22 +19,22 @@ class Dbaccess:
         self.conn.close()
 
     # select実行し、辞書形式で返却
-    def execute_select(self, sql, list_param):
+    def execute_select(self, sql, l_param):
         # SQL実行
-        self.cursor.execute(sql, list_param)
+        self.cursor.execute(sql, l_param)
         # 取得結果を出力
-        results = self.cursor.fetchall()
+        cur_result = self.cursor.fetchall()
         # 辞書形式で取得
-        dict_result = []
-        for row in results:
-            dict_result.append(dict(row))
+        l_d_result = []
+        for rec_result in cur_result:
+            l_d_result.append(dict(rec_result))
 
-        return dict_result
+        return l_d_result
 
     # insert文を実行
-    def execute_insert(self, sql, list_param):
+    def execute_insert(self, sql, l_param):
         # SQL実行
-        self.cursor.execute(sql, list_param)
+        self.cursor.execute(sql, l_param)
 
     # コミット
     def commit(self):
