@@ -138,8 +138,8 @@ def lambda_handler(event, context):
 
         # レース情報取得（レース当日の情報取得のため、作業用テーブルを検索する）
         db_client = dbaccess.Dbaccess()
-        l_d_race_head = db_client.execute_select(sql.Sql.select_W_RACE_HEAD_by_racekey, l_race_key)
-        l_d_race_info = db_client.execute_select(sql.Sql.select_W_RACE_RACER_by_racekey, l_race_key)
+        l_d_race_head = db_client.execute_select(sql.Sql.select_W_RACE_HEAD_for_view, l_race_key)
+        l_d_race_info = db_client.execute_select(sql.Sql.select_W_RACE_RACER_for_view, l_race_key)
 
         # 0件だった場合、試走タイムが出ていなかった場合、DELETE → スクレイピング → INSERT
         # 成功した場合、画面表示用にレース情報を再セット
@@ -148,8 +148,8 @@ def lambda_handler(event, context):
             db_client.execute_delete(sql.Sql.delete_W_RACE_RACER_by_racekey, l_race_key)
             flg_scraped_insert = scraped_insert(db_client, l_race_key)
             if flg_scraped_insert:
-                l_d_race_head = db_client.execute_select(sql.Sql.select_W_RACE_HEAD_by_racekey, l_race_key)
-                l_d_race_info = db_client.execute_select(sql.Sql.select_W_RACE_RACER_by_racekey, l_race_key)
+                l_d_race_head = db_client.execute_select(sql.Sql.select_W_RACE_HEAD_for_view, l_race_key)
+                l_d_race_info = db_client.execute_select(sql.Sql.select_W_RACE_RACER_for_view, l_race_key)
             else:
                 err_msg = message.Message.err2.format(place, round)
                 raise Exception(err_msg)

@@ -16,9 +16,9 @@ def lambda_handler(event, context):
 
         # 過去レース情報取得
         db_client = dbaccess.Dbaccess()
-        l_d_race_head = db_client.execute_select(sql.Sql.select_T_RACE_HEAD_by_racekey, l_race_key)
-        l_d_race_info = db_client.execute_select(sql.Sql.select_T_RACE_RACER_by_racekey, l_race_key)
-        l_d_race_result = db_client.execute_select(sql.Sql.select_T_RACE_RESULT_by_racekey, l_race_key)
+        l_d_race_head = db_client.execute_select(sql.Sql.select_T_RACE_HEAD_for_view, l_race_key)
+        l_d_race_info = db_client.execute_select(sql.Sql.select_T_RACE_RACER_for_view, l_race_key)
+        l_d_race_result = db_client.execute_select(sql.Sql.select_T_RACE_RESULT_for_view, l_race_key)
 
         # 0件だった場合、エラー
         if len(l_d_race_head) == 0 or len(l_d_race_info) == 0 or len(l_d_race_result) == 0:

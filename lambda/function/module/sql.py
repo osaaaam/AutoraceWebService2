@@ -1,7 +1,7 @@
 class Sql:
 
-    # 過去レースヘッダーテーブルから取得するSQL
-    select_T_RACE_HEAD_by_racekey = " SELECT rh.race_name レース "\
+    # 画面表示用 SQL
+    select_T_RACE_HEAD_for_view = " SELECT rh.race_name レース "\
                                     "       ,rh.distance 距離 "\
                                     "       ,rh.weather 天候 "\
                                     "       ,rh.temperature 気温 "\
@@ -13,8 +13,8 @@ class Sql:
                                     "    AND rh.place = %s "\
                                     "    AND rh.round = %s "
 
-    # 過去レース情報テーブルから取得するSQL
-    select_T_RACE_RACER_by_racekey = " SELECT rr.car_no 車番 "\
+    # 画面表示用 SQL
+    select_T_RACE_RACER_for_view = " SELECT rr.car_no 車番 "\
                                      "       ,rr.racer 選手名 "\
                                      "       ,rr.hande ハンデ "\
                                      "       ,rr.trialrun 試走タイム "\
@@ -26,8 +26,8 @@ class Sql:
                                      "    AND rr.round = %s "\
                                      "  ORDER BY rr.car_no "
 
-    # 過去レース結果テーブルから取得するSQL
-    select_T_RACE_RESULT_by_racekey = " SELECT rr.first_place １着 "\
+    # 画面表示用 SQL
+    select_T_RACE_RESULT_for_view = " SELECT rr.first_place １着 "\
                                       "       ,rr.second_place ２着 "\
                                       "       ,rr.third_place ３着 "\
                                       "       ,rr.payoff_2t ３連単 "\
@@ -40,8 +40,8 @@ class Sql:
                                       "    AND rr.place = %s "\
                                       "    AND rr.round = %s "
 
-    # 作業用レースヘッダーテーブルから取得するSQL
-    select_W_RACE_HEAD_by_racekey = " SELECT rh.race_name レース "\
+    # 画面表示用 SQL
+    select_W_RACE_HEAD_for_view = " SELECT rh.race_name レース "\
                                     "       ,rh.distance 距離 "\
                                     "       ,rh.weather 天候 "\
                                     "       ,rh.temperature 気温 "\
@@ -53,8 +53,8 @@ class Sql:
                                     "    AND rh.place = %s "\
                                     "    AND rh.round = %s "
 
-    # 作業用レース情報テーブルから取得するSQL
-    select_W_RACE_RACER_by_racekey = " SELECT rr.car_no 車番 "\
+    # 画面表示用 SQL
+    select_W_RACE_RACER_for_view = " SELECT rr.car_no 車番 "\
                                      "       ,rr.racer 選手名 "\
                                      "       ,rr.represent 所属 "\
                                      "       ,rr.hande ハンデ "\
@@ -66,7 +66,7 @@ class Sql:
                                      "    AND rr.round = %s "\
                                      "  ORDER BY rr.car_no "
 
-    # 作業用レースヘッダーテーブルに挿入するSQL
+    # 挿入 SQL
     insert_W_RACE_HEAD = " INSERT INTO auto.w_race_head ( "\
                          "     dated, "\
                          "     place, "\
@@ -81,7 +81,7 @@ class Sql:
                          " ) "\
                          " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
 
-    # 作業用レース情報テーブルに挿入するSQL
+    # 挿入 SQL
     insert_W_RACE_RACER = " INSERT INTO auto.w_race_racer ( "\
                           "     dated, "\
                           "     place, "\
@@ -96,19 +96,19 @@ class Sql:
                           " ) "\
                           " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
 
-    # 作業用レースヘッダーテーブルを削除するSQL
+    # 削除 SQL
     delete_W_RACE_HEAD_by_racekey = " DELETE FROM auto.w_race_head rh "\
                                     "  WHERE rh.dated = %s "\
                                     "    AND rh.place = %s "\
                                     "    AND rh.round = %s "
 
-    # 作業用レース情報テーブルを削除するSQL
+    # 削除 SQL
     delete_W_RACE_RACER_by_racekey = " DELETE FROM auto.w_race_racer rr "\
                                     "  WHERE rr.dated = %s "\
                                     "    AND rr.place = %s "\
                                     "    AND rr.round = %s "
 
-    # 予測用訓練データを取得するSQL
+    # 分析用 SQL
     select_train_data_for_anaylize = " SELECT rr.car_no 車番 "\
                                      "       ,rr.hande ハンデ "\
                                      "       ,rr.trialrun 試走タイム "\
@@ -140,7 +140,7 @@ class Sql:
                                      "    AND rh.distance = %s "\
                                      "    AND rh.runway_condition = %s "
 
-    # 予測用テストデータを取得するSQL
+    # 分析用 SQL
     select_test_data_for_anaylize = " SELECT rr.car_no 車番 "\
                                     "       ,rr.hande ハンデ "\
                                     "       ,rr.trialrun 試走タイム "\
