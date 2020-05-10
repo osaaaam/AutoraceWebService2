@@ -34,7 +34,7 @@
                 <ul class="gnav__menu">
                     <li class="gnav__menu__item"><a href="toppage.html">Top</a></li>
                     <li class="gnav__menu__item"><a href="raceinfo.html">RaceInfo</a></li>
-                    <li class="gnav__menu__item"><a href="raceinfo_history.html">RaceInfoHistory</a></li>
+                    <!-- <li class="gnav__menu__item"><a href="raceinfo_history.html">RaceInfoHistory</a></li> -->
                     <li class="gnav__menu__item"><a href="anaylize.html">Anaylize</a></li>
                 </ul>
             </div>
@@ -124,12 +124,13 @@
             });
 
             // 検索
-            var json; //test用
             $(function () {
                 $("#btnSearch").click(function (e) {
                     if ($("#inputDated").val() == "" || $("#inputPlace").val() == "" || $("#inputRound").val() == "") {
                         alert("検索条件を入力してください。");
                     }else{
+                        $("#race_info").empty();
+                        $("#anaylize").empty();
                         // レース情報取得
                         $.ajax({
                             url:'https://ntg3gua04h.execute-api.ap-northeast-1.amazonaws.com/prod/analyze',
@@ -141,14 +142,10 @@
                             }
                         })
                         .done( (response) => {
-                            json = response;
-                            $("#race_info").empty();
                             $("#race_info").append(from_json_to_table(response["race_info"]));
-                            $("#anaylize").empty();
                             $("#anaylize").append(from_json_to_table(response["anaylize"]));
                         })
                         .fail( (response) => {
-                            json = response;
                             if (response["status"] == 0){
                                 alert("error!");
                             }else{
