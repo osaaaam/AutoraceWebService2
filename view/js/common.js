@@ -21,6 +21,49 @@ function setting_menu(){
 }
 
 
+// inputPlaceドロップダウン動的生成
+function setting_place(){
+    $.ajax({
+        url:'https://ntg3gua04h.execute-api.ap-northeast-1.amazonaws.com/prod/common/place',
+        type:'GET',
+        data:{
+            'dated':$('#inputDated').val()
+        }
+    })
+    .done( (response) => {
+        $("#inputPlace").append(from_json_to_select(response["place"]));
+        $('select').formSelect(); //materialize再設定
+    })
+    .fail( (response) => {
+        if (response["status"] == 0){
+            alert("error!");
+        }else{
+            alert(response["responseJSON"]);
+        }
+    })
+    .always( (response) => {
+    });
+}
+
+
+// json形式データから<select>子要素のhtmlを生成する
+function from_json_to_select(json){
+    let select = "";
+    // テーブルヘッダー作成
+    select += "<option Value=''></option>\n";
+    for (i = 0; i < json.length; i++) {
+        for (key in json[i]) {
+            if (json[i][key] != null){
+                select += "<option Value='" + json[i][key] + "'>";
+                select += json[i][key];
+                select += "</option>\n";
+            }
+        }
+    }
+    return select
+}
+
+
 // json形式データから<table>子要素のhtmlを生成する
 function from_json_to_table(json){
     let table = "";
