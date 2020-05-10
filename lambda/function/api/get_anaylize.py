@@ -117,6 +117,17 @@ def anaylize_model2(db_client, l_d_race_head, l_d_race_info, l_race_key):
     }
 
 
+def check_exist_data(l_d_race_head, l_d_race_info):
+    # 0件の場合
+    if len(l_d_race_head) == 0 and len(l_d_race_info) == 0:
+        return False
+    # 試走が出ていない
+    for d_race_info in l_d_race_info:
+        if d_race_info["試走タイム"] is None:
+            return False
+    return True
+
+
 def lambda_handler(event, context):
     try:
         # パラム取得
@@ -130,9 +141,11 @@ def lambda_handler(event, context):
         l_d_race_head = db_client.execute_select(sql.Sql.select_W_RACE_HEAD_by_racekey, l_race_key)
         l_d_race_info = db_client.execute_select(sql.Sql.select_W_RACE_RACER_by_racekey, l_race_key)
 
-        # 0件だった場合、スクレイピングしてDBへINSERT
+        # 0件だった場合、試走タイムが出ていなかった場合、DELETE → スクレイピング → INSERT
         # 成功した場合、画面表示用にレース情報を再セット
-        if len(l_d_race_head) == 0 and len(l_d_race_info) == 0:
+        if check_exist_data(l_d_race_head, l_d_race_info) == False:
+            db_client.execute_delete(sql.Sql.delete_W_RACE_HEAD_by_racekey, l_race_key)
+            db_client.execute_delete(sql.Sql.delete_W_RACE_RACER_by_racekey, l_race_key)
             flg_scraped_insert = scraped_insert(db_client, l_race_key)
             if flg_scraped_insert:
                 l_d_race_head = db_client.execute_select(sql.Sql.select_W_RACE_HEAD_by_racekey, l_race_key)
@@ -141,9 +154,9 @@ def lambda_handler(event, context):
                 err_msg = message.Message.err2.format(place, round)
                 raise Exception(err_msg)
 
-        # 0件だった場合、エラー
-        if len(l_d_race_head) == 0 or len(l_d_race_info) == 0:
-            err_msg = message.Message.err2.format(place, round)
+        # 0件だった場合、試走タイムが出ていなかった場合、エラー
+        if check_exist_data(l_d_race_head, l_d_race_info) == False:
+            err_msg = message.Message.err3
             raise Exception(err_msg)
 
         # 分析実行
@@ -153,8 +166,8 @@ def lambda_handler(event, context):
             l_d_anaylize.append(anaylize_model2(db_client, l_d_race_head, l_d_race_info, l_race_key))
 
         except Exception as e:
-            print(e)
-            err_msg = message.Message.err3.format(place, round)
+            print(str(e))
+            err_msg = message.Message.err4
             raise Exception(err_msg)
 
         # レスポンス

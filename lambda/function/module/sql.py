@@ -96,6 +96,18 @@ class Sql:
                           " ) "\
                           " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
 
+    # 作業用レースヘッダーテーブルを削除するSQL
+    delete_W_RACE_HEAD_by_racekey = " DELETE FROM auto.w_race_head rh "\
+                                    "  WHERE rh.dated = %s "\
+                                    "    AND rh.place = %s "\
+                                    "    AND rh.round = %s "
+
+    # 作業用レース情報テーブルを削除するSQL
+    delete_W_RACE_RACER_by_racekey = " DELETE FROM auto.w_race_racer rr "\
+                                    "  WHERE rr.dated = %s "\
+                                    "    AND rr.place = %s "\
+                                    "    AND rr.round = %s "
+
     # 予測用訓練データを取得するSQL
     select_train_data_for_anaylize = " SELECT rr.car_no 車番 "\
                                      "       ,rr.hande ハンデ "\
