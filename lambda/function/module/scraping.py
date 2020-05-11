@@ -146,10 +146,9 @@ class Scraping:
         try:
             for i in range(len(self.l_soup)):
                 soup = self.l_soup[i]
-                #divタグのid=tabs3で検索
+                #divタグのid=tabs3で検索（ある=未開催）
                 soup = soup.find_all("div", id="tabs3")
-                for tag in soup:
-                    # あったら開催してないため、そのレース場を削除
+                if len(soup) > 0:
                     self.out_list_place.remove(self.l_l_race_key[i][1])
 
         except Exception as e:

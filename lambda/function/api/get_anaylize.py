@@ -36,10 +36,10 @@ def scraped_insert(db_client, l_race_key):
         return True
 
 
-# 分析1
-def anaylize_model1(db_client, l_d_race_head, l_d_race_info, l_race_key):
-    # ランダムフォレストで予測する
-    anaylize_client = anaylize.Sklearn("RandomForestRegressor")
+# 分析1（scikit-learnの回帰分析を使用し、各選手ごとに競争タイムを予測する）
+def anaylize_model1(algorithm, l_input, db_client, l_d_race_head, l_d_race_info, l_race_key):
+    anaylize_client = anaylize.Sklearn(algorithm)
+    output = "競争タイム"
     l_d_result = []
     train_count = 0
     for i in range(len(l_d_race_info)):
@@ -55,60 +55,22 @@ def anaylize_model1(db_client, l_d_race_head, l_d_race_info, l_race_key):
         )
         # 実行
         l_result = anaylize_client.execute_anaylize(
-            l_d_train_data, l_d_test_date, "競争タイム", ["車番", "ハンデ", "試走タイム"]
+            l_d_train_data, l_d_test_date, output, l_input
         )
+        # 返却値（競争タイム）を使用し、ヨーイドンからゴールまでのタイムを計算
+        goal_time = l_result[0] / 100 * (l_d_race_head[0]["距離"] + l_d_race_info[i]["ハンデ"])
         # 辞書型をリストに格納
-        l_d_result.append({"車番": l_d_race_info[i]["車番"], "結果": l_result[0]})
+        l_d_result.append({"車番": l_d_race_info[i]["車番"], "結果": goal_time})
         # 訓練データの件数
         train_count += len(l_d_train_data)
 
     # 画面表示用に整形
     l_d_result.sort(key=lambda x:x['結果'])
     return {
-        "予測モデル": "RandomForest",
+        "予測モデル": algorithm,
         "学習件数": str(train_count) + "R",
-        "INPUT": "選手名、距離、走路状態、車番、ハンデ、試走",
-        "OUTPUT": "競争タイム",
-        "◎": l_d_result[0]["車番"],
-        "○": l_d_result[1]["車番"],
-        "▲": l_d_result[2]["車番"],
-        "△": l_d_result[3]["車番"]
-    }
-
-
-# 分析2
-def anaylize_model2(db_client, l_d_race_head, l_d_race_info, l_race_key):
-    # ランダムフォレストで予測する
-    anaylize_client = anaylize.Sklearn("RandomForestRegressor")
-    l_d_result = []
-    train_count = 0
-    for i in range(len(l_d_race_info)):
-        # 訓練データを準備
-        l_d_train_data = db_client.execute_select(
-            sql.Sql.select_train_data_for_anaylize,
-            [l_d_race_info[i]["選手名"], l_d_race_head[0]["距離"], l_d_race_head[0]["走路状況"]]
-        )
-        # テストデータを準備
-        l_d_test_date = db_client.execute_select(
-            sql.Sql.select_test_data_for_anaylize,
-            l_race_key + [l_d_race_info[i]["車番"]]
-        )
-        # 実行
-        l_result = anaylize_client.execute_anaylize(
-            l_d_train_data, l_d_test_date, "競争タイム", ["車番", "ハンデ", "試走タイム", "ポジション", "気温", "湿度", "走路温度"]
-        )
-        # 辞書型をリストに格納
-        l_d_result.append({"車番": l_d_race_info[i]["車番"], "結果": l_result[0]})
-        # 訓練データの件数
-        train_count += len(l_d_train_data)
-
-    # 画面表示用に整形
-    l_d_result.sort(key=lambda x:x['結果'])
-    return {
-        "予測モデル": "RandomForest",
-        "学習件数": str(train_count) + "R",
-        "INPUT": "選手名、距離、走路状態、車番、ハンデ、試走、ポジション、気温、湿度、走路温度",
-        "OUTPUT": "競争タイム",
+        "INPUT": l_input,
+        "OUTPUT": output,
         "◎": l_d_result[0]["車番"],
         "○": l_d_result[1]["車番"],
         "▲": l_d_result[2]["車番"],
@@ -161,8 +123,26 @@ def lambda_handler(event, context):
         # 分析実行
         try:
             l_d_anaylize = []
-            l_d_anaylize.append(anaylize_model1(db_client, l_d_race_head, l_d_race_info, l_race_key))
-            l_d_anaylize.append(anaylize_model2(db_client, l_d_race_head, l_d_race_info, l_race_key))
+            l_d_anaylize.append(anaylize_model1(
+                "LinearRegression", ["試走タイム", "ポジション", "ハンデ前車数"],
+                db_client, l_d_race_head, l_d_race_info, l_race_key)
+            )
+            l_d_anaylize.append(anaylize_model1(
+                "LinearRegression", ["試走タイム", "車番", "ハンデ", "ポジション", "ハンデ前車数", "走路温度", "気温", "湿度"],
+                db_client, l_d_race_head, l_d_race_info, l_race_key)
+            )
+            l_d_anaylize.append(anaylize_model1(
+                "RandomForestRegressor", ["試走タイム", "車番", "ハンデ", "ポジション", "ハンデ前車数", "走路温度", "気温", "湿度"],
+                db_client, l_d_race_head, l_d_race_info, l_race_key)
+            )
+            l_d_anaylize.append(anaylize_model1(
+                "ElasticNet", ["試走タイム", "車番", "ハンデ", "ポジション", "ハンデ前車数", "走路温度", "気温", "湿度"],
+                db_client, l_d_race_head, l_d_race_info, l_race_key)
+            )
+            l_d_anaylize.append(anaylize_model1(
+                "RandomForestRegressor", ["車番", "ハンデ", "ポジション", "ハンデ前車数", "走路温度", "気温", "湿度"],
+                db_client, l_d_race_head, l_d_race_info, l_race_key)
+            )
 
         except Exception as e:
             print(str(e))

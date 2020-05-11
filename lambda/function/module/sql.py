@@ -128,6 +128,7 @@ class Sql:
                                      "       ,rh.temperature 気温 "\
                                      "       ,rh.humidity 湿度 "\
                                      "       ,rh.runway_temperature 走路温度 "\
+                                     "       ,(select column_out from auto.m_convert where column_in = rh.place) レース場 "\
                                      "       ,CASE "\
                                      "          WHEN rr.car_no=1 THEN po.first_car "\
                                      "          WHEN rr.car_no=2 THEN po.second_car "\
@@ -139,6 +140,14 @@ class Sql:
                                      "          WHEN rr.car_no=8 THEN po.eighth_car "\
                                      "          ELSE 0 "\
                                      "        END ポジション "\
+                                     "       ,( "\
+                                     "          select count(*) "\
+                                     "            from auto.w_race_racer "\
+                                     "           where dated = rr.dated "\
+                                     "             and place = rr.place "\
+                                     "             and round = rr.round "\
+                                     "             and hande < rr.hande "\
+                                     "        ) ハンデ前車数 "\
                                      "   FROM auto.t_race_racer rr "\
                                      "  INNER JOIN auto.t_race_head rh "\
                                      "     ON rr.dated = rh.dated "\
@@ -160,6 +169,15 @@ class Sql:
                                     "       ,rh.temperature 気温 "\
                                     "       ,rh.humidity 湿度 "\
                                     "       ,rh.runway_temperature 走路温度 "\
+                                    "       ,(select column_out from auto.m_convert where column_in = rh.place) レース場 "\
+                                    "       ,( "\
+                                    "          select count(*) "\
+                                    "            from auto.w_race_racer "\
+                                    "           where dated = rr.dated "\
+                                    "             and place = rr.place "\
+                                    "             and round = rr.round "\
+                                    "             and hande < rr.hande "\
+                                    "        ) ハンデ前車数 "\
                                     "   FROM auto.w_race_racer rr "\
                                     "  INNER JOIN auto.w_race_head rh "\
                                     "     ON rr.dated = rh.dated "\
