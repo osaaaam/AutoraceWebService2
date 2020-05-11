@@ -128,6 +128,7 @@ class Sql:
                                      "       ,rh.temperature 気温 "\
                                      "       ,rh.humidity 湿度 "\
                                      "       ,rh.runway_temperature 走路温度 "\
+                                     "       ,(select column_out from auto.m_convert where column_in = rh.place) レース場 "\
                                      "       ,CASE "\
                                      "          WHEN rr.car_no=1 THEN po.first_car "\
                                      "          WHEN rr.car_no=2 THEN po.second_car "\
@@ -160,6 +161,7 @@ class Sql:
                                     "       ,rh.temperature 気温 "\
                                     "       ,rh.humidity 湿度 "\
                                     "       ,rh.runway_temperature 走路温度 "\
+                                    "       ,(select column_out from auto.m_convert where column_in = rh.place) レース場 "\
                                     "   FROM auto.w_race_racer rr "\
                                     "  INNER JOIN auto.w_race_head rh "\
                                     "     ON rr.dated = rh.dated "\

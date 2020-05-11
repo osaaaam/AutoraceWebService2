@@ -95,7 +95,7 @@ def anaylize_model2(db_client, l_d_race_head, l_d_race_info, l_race_key):
         )
         # 実行
         l_result = anaylize_client.execute_anaylize(
-            l_d_train_data, l_d_test_date, "競争タイム", ["車番", "ハンデ", "試走タイム", "ポジション", "気温", "湿度", "走路温度"]
+            l_d_train_data, l_d_test_date, "競争タイム", ["車番", "ハンデ", "試走タイム", "ポジション", "走路温度", "レース場"]
         )
         # 辞書型をリストに格納
         l_d_result.append({"車番": l_d_race_info[i]["車番"], "結果": l_result[0]})
@@ -107,7 +107,7 @@ def anaylize_model2(db_client, l_d_race_head, l_d_race_info, l_race_key):
     return {
         "予測モデル": "RandomForest",
         "学習件数": str(train_count) + "R",
-        "INPUT": "選手名、距離、走路状態、車番、ハンデ、試走、ポジション、気温、湿度、走路温度",
+        "INPUT": "選手名、距離、走路状態、車番、ハンデ、試走、ポジション、走路温度、レース場",
         "OUTPUT": "競争タイム",
         "◎": l_d_result[0]["車番"],
         "○": l_d_result[1]["車番"],
