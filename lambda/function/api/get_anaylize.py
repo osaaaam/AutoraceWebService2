@@ -32,58 +32,120 @@ def scraped_insert(db_client, l_race_key):
                 scraping_client.out_lists_position[0][i]
             ]
             db_client.execute_insert(sql.Sql.insert_W_RACE_RACER, l_param)
-        db_client.commit()
         return True
 
-
-# 分析1（scikit-learnの回帰分析を使用し、各選手ごとに競争タイムを予測する）
+# 分析1（複数予測結果の集計）
 def anaylize_rule1(d_anaylize_model, db_client, l_d_race_head, l_d_race_info, l_race_key):
-    anaylize_client = anaylize.Sklearn(d_anaylize_model["アルゴリズム"])
+
+    ### 予測
+    # どのモデルの予測値を集計させるか判別（最大5こまで）
+    l_anaylize_model = d_anaylize_model["詳細"].split(",")
+    count_anaylize_model = len(l_anaylize_model)
+    l_anaylize_model = l_anaylize_model + ["99", "99", "99", "99", "99"]
+    l_anaylize_model = l_anaylize_model[:5]
+    # 集計した予測値を取得
+    l_d_anaylize_result_detail = db_client.execute_select(
+        sql.Sql.select_W_ANAYLIZE_RESULT_VALUE_for_anaylize, l_race_key + l_anaylize_model
+    )
+    # 集計した予測値を整形し、リストに格納
+    l_result = [
+        l_d_anaylize_result_detail[0]["１号車"] / count_anaylize_model,
+        l_d_anaylize_result_detail[0]["２号車"] / count_anaylize_model,
+        l_d_anaylize_result_detail[0]["３号車"] / count_anaylize_model,
+        l_d_anaylize_result_detail[0]["４号車"] / count_anaylize_model,
+        l_d_anaylize_result_detail[0]["５号車"] / count_anaylize_model,
+        l_d_anaylize_result_detail[0]["６号車"] / count_anaylize_model,
+        l_d_anaylize_result_detail[0]["７号車"] / count_anaylize_model,
+        l_d_anaylize_result_detail[0]["８号車"] / count_anaylize_model
+    ]
+
+    ### 予測値をDBへ取り込み
+    db_client.execute_insert(
+        sql.Sql.insert_W_ANAYLIZE_RESULT_VALUE,
+        l_race_key + [d_anaylize_model["モデル"]] + l_result
+    )
+
+    ### 予測着順をDBへ取り込み（7車制を考慮）
     l_d_result = []
-    l_result_ori = []
+    for i in range(len(l_d_race_info)):
+        # 予測値整形
+        if d_anaylize_model["アウトプット"] == "競争タイム":
+            # 競争タイムから、ヨーイドンからゴールまでのタイムを計算
+            l_result[i] = l_result[i] / 100 * (l_d_race_head[0]["距離"] + l_d_race_info[i]["ハンデ"])
+        # 着順を決める用に、辞書型でリストに格納
+        l_d_result.append({"車番": l_d_race_info[i]["車番"], "予測結果": l_result[i]})
+    # ソートして着順に車番を取得する
+    l_d_result.sort(key=lambda x:x['予測結果'])
+    l_car_no = []
+    for d_result in l_d_result:
+        l_car_no.append(d_result["車番"])
+    l_car_no.append(None)
+    # INSERT
+    db_client.execute_insert(
+        sql.Sql.insert_W_ANAYLIZE_RESULT_RANK,
+        l_race_key + [
+            d_anaylize_model["モデル"],
+            d_anaylize_model["アルゴリズム"],
+            None,
+            None,
+            d_anaylize_model["インプット"],
+            d_anaylize_model["アウトプット"]
+        ] + l_car_no[:8]
+    )
+
+
+# 分析2（scikit-learnの回帰分析を使用し、各選手ごとに競争タイムを予測する）
+def anaylize_rule2(d_anaylize_model, db_client, l_d_race_head, l_d_race_info, l_race_key):
+
+    l_d_result = []
+    l_result = []
     train_count = 0
+
+    ### 予測
+    anaylize_client = anaylize.Sklearn(d_anaylize_model["アルゴリズム"])
     for i in range(len(l_d_race_info)):
         # 訓練データを準備
         l_d_train_data = db_client.execute_select(
             sql.Sql.select_train_data_for_anaylize,
             [l_d_race_info[i]["選手名"], l_d_race_head[0]["距離"], l_d_race_head[0]["走路状況"]]
         )
-        # 訓練データの件数
+        # 訓練データの件数取得
         train_count += len(l_d_train_data)
         # テストデータを準備
         l_d_test_date = db_client.execute_select(
             sql.Sql.select_test_data_for_anaylize,
             l_race_key + [l_d_race_info[i]["車番"]]
         )
-        # 実行
-        l_result = anaylize_client.execute_anaylize(
+        # 予測実行
+        result = anaylize_client.execute_anaylize(
             l_d_train_data, l_d_test_date, d_anaylize_model["アウトプット"], d_anaylize_model["インプット"].split(",")
-        )
-        # 整形前の予測結果をリストに格納
-        l_result_ori.append(l_result[0])
-        # 予測結果整形
+        )[0]
+        # 予測値をリストに格納
+        l_result.append(result)
+        # 予測値整形
         if d_anaylize_model["アウトプット"] == "競争タイム":
             # 競争タイムから、ヨーイドンからゴールまでのタイムを計算
-            l_result[0] = l_result[0] / 100 * (l_d_race_head[0]["距離"] + l_d_race_info[i]["ハンデ"])
-        # 整形後の予測結果を、辞書型でリストに格納
-        l_d_result.append({"車番": l_d_race_info[i]["車番"], "予測結果": l_result[0]})
+            result = result / 100 * (l_d_race_head[0]["距離"] + l_d_race_info[i]["ハンデ"])
+        # 着順を決める用に、辞書型でリストに格納
+        l_d_result.append({"車番": l_d_race_info[i]["車番"], "予測結果": result})
 
-    # オリジナルの予測結果をDBへ取り込み（7車制を考慮）
-    l_result_ori.append(None)
-    l_result_ori = l_result_ori[:8]
+    ### 予測値をDBへ取り込み（7車制を考慮）
+    l_result.append(None)
     db_client.execute_insert(
-        sql.Sql.insert_W_ANAYLIZE_RESULT_DETAIL,
-        l_race_key + [d_anaylize_model["モデル"]] + l_result_ori
+        sql.Sql.insert_W_ANAYLIZE_RESULT_VALUE,
+        l_race_key + [d_anaylize_model["モデル"]] + l_result[:8]
     )
-    # 整形後の予測結果をDBへ取り込み（7車制を考慮）
-    # 予測結果でソート
+
+    ### 予測着順をDBへ取り込み（7車制を考慮）
+    # ソートして着順に車番を取得する
     l_d_result.sort(key=lambda x:x['予測結果'])
     l_car_no = []
     for d_result in l_d_result:
         l_car_no.append(d_result["車番"])
     l_car_no.append(None)
+    # INSERT
     db_client.execute_insert(
-        sql.Sql.insert_W_ANAYLIZE_RESULT,
+        sql.Sql.insert_W_ANAYLIZE_RESULT_RANK,
         l_race_key + [
             d_anaylize_model["モデル"],
             d_anaylize_model["アルゴリズム"],
@@ -93,7 +155,6 @@ def anaylize_rule1(d_anaylize_model, db_client, l_d_race_head, l_d_race_info, l_
             d_anaylize_model["アウトプット"]
         ] + l_car_no[:8]
     )
-    db_client.commit()
 
 
 def check_exist_data(l_d_race_head, l_d_race_info):
@@ -126,6 +187,7 @@ def lambda_handler(event, context):
             db_client.execute_delete(sql.Sql.delete_W_RACE_HEAD_by_racekey, l_race_key)
             db_client.execute_delete(sql.Sql.delete_W_RACE_RACER_by_racekey, l_race_key)
             flg_scraped_insert = scraped_insert(db_client, l_race_key)
+            db_client.commit()
             if flg_scraped_insert:
                 l_d_race_head = db_client.execute_select(sql.Sql.select_W_RACE_HEAD_for_view, l_race_key)
                 l_d_race_info = db_client.execute_select(sql.Sql.select_W_RACE_RACER_for_view, l_race_key)
@@ -139,20 +201,26 @@ def lambda_handler(event, context):
             raise Exception(err_msg)
 
         # 分析済みレースか確認
-        l_d_anaylize_result = db_client.execute_select(sql.Sql.select_W_ANAYLIZE_RESULT_for_view, l_race_key)
-        l_d_anaylize_result_detail = db_client.execute_select(sql.Sql.select_W_ANAYLIZE_RESULT_DETAIL_for_view, l_race_key)
+        l_d_anaylize_result = db_client.execute_select(sql.Sql.select_W_ANAYLIZE_RESULT_RANK_for_view, l_race_key)
+        l_d_anaylize_result_detail = db_client.execute_select(sql.Sql.select_W_ANAYLIZE_RESULT_VALUE_for_view, l_race_key)
         if len(l_d_anaylize_result) == 0:
             # 分析方法をDBから取得
             l_d_anaylize_model = db_client.execute_select(sql.Sql.select_M_ANAYLIZE_MODEL, [])
             # 分析実行
             try:
                 for d_anaylize_model in l_d_anaylize_model:
-                    anaylize_rule1(
-                        d_anaylize_model, db_client, l_d_race_head, l_d_race_info, l_race_key
-                    )
+                    if d_anaylize_model["アルゴリズム"] == "Union":
+                        anaylize_rule1(
+                            d_anaylize_model, db_client, l_d_race_head, l_d_race_info, l_race_key
+                        )
+                    else:
+                        anaylize_rule2(
+                            d_anaylize_model, db_client, l_d_race_head, l_d_race_info, l_race_key
+                        )
+                db_client.commit()
                 # 画面表示用に再セット
-                l_d_anaylize_result = db_client.execute_select(sql.Sql.select_W_ANAYLIZE_RESULT_for_view, l_race_key)
-                l_d_anaylize_result_detail = db_client.execute_select(sql.Sql.select_W_ANAYLIZE_RESULT_DETAIL_for_view, l_race_key)
+                l_d_anaylize_result = db_client.execute_select(sql.Sql.select_W_ANAYLIZE_RESULT_RANK_for_view, l_race_key)
+                l_d_anaylize_result_detail = db_client.execute_select(sql.Sql.select_W_ANAYLIZE_RESULT_VALUE_for_view, l_race_key)
             except Exception as e:
                 print(str(e))
                 err_msg = message.Message.err4

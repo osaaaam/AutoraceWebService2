@@ -4,7 +4,6 @@ raceinfo.html
 raceinfo_history.html
 anaylize.html
 startboard.html
-odds_monitor.html
 
 
 ■フォルダ構成
@@ -21,16 +20,17 @@ AutoraceWebService
                 get_raceinfo.py
                 get_raceinfo_history.py
                 get_anaylize.py
-                get_odds.py
             batch
-                daily.py（日次でスケジュール）
+                daily.py
+                start_rds.py
+                end_rds.py
             module（自作モジュール置き場）
                 dbaccess.py（DBアクセス（psycopg2）クラス）
                 scraping.py（スクレイピング（bs）クラス）
                 anaylize.py（分析（sklearn）クラス）
-                awsmanagement.py（s3操作クラス、rds操作クラス）
-                message.py（メッセージクラス）
-                sql.py（SQLクラス）
+                message.py
+                sql.py
+                awsmanagement.py（rds操作クラス）
             packages（外部モジュール置き場）
                 psycopg2
                 bs4
@@ -49,8 +49,6 @@ raceinfo
         └ get（get_raceinfo_history.py）
 anaylize
     └ get（get_anaylize.py）
-odds
-    └ get（get_odds.py）
 common
     place
         └ get（get_place.py）
@@ -59,6 +57,8 @@ common
 ■テーブル一覧
 マスタ系
 ・m_racer　（t_race_racerに所属入れてできれば消したい）
+・m_convert
+・m_anaylize_model
 表示用トラン
 ・t_race_head
 ・t_race_racer　（t_race_infoに変えたい）（所属もここに入れたい）（ランクいらない）（試走、ポジションもほしい）
@@ -69,15 +69,14 @@ common
 ・t_trialrun
 ・t_racetime
 ・t_starttime
-・t_position
+・t_position　（縦のポジションのTBLもほしい）
 ・t_deviation　（データ取り直すなら作る）
 ・t_represent　（データ取り直すなら作る）
 表示用ワーク
 ・w_race_head
 ・w_race_racer　（w_race_infoに変えたい）
 分析用ワーク
-・w_anaylize
-オッズ用ワーク
-・w_odds
+・w_anaylize_result_rank
+・w_anaylize_result_value
 本日実施場ワーク
 ・w_place
