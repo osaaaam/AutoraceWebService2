@@ -125,6 +125,7 @@ class Sql:
                                      "       ,rr.hande ハンデ "\
                                      "       ,rr.trialrun 試走タイム "\
                                      "       ,rr.racetime 競争タイム "\
+                                     "       ,rr.rank 着順 "\
                                      "       ,rh.temperature 気温 "\
                                      "       ,rh.humidity 湿度 "\
                                      "       ,rh.runway_temperature 走路温度 "\
@@ -187,3 +188,80 @@ class Sql:
                                     "    AND rr.place = %s "\
                                     "    AND rr.round = %s "\
                                     "    AND rr.car_no = %s "
+
+    # 分析用 SQL
+    select_M_ANAYLIZE_MODEL = " SELECT am.model_no モデル "\
+                              "       ,am.algorithm アルゴリズム "\
+                              "       ,am.algorithm_list 詳細 "\
+                              "       ,am.features インプット "\
+                              "       ,am.target アウトプット "\
+                              "   FROM auto.m_anaylize_model am "
+
+    # 画面表示用分析用 SQL
+    select_W_ANAYLIZE_RESULT_for_view = " SELECT ar.model_no モデル "\
+                                        "       ,ar.algorithm アルゴリズム "\
+                                        "       ,ar.count_data 学習件数 "\
+                                        "       ,ar.features インプット "\
+                                        "       ,ar.target アウトプット "\
+                                        "       ,ar.first_place ◎ "\
+                                        "       ,ar.second_place ○ "\
+                                        "       ,ar.third_place ▲ "\
+                                        "       ,ar.fourth_place △ "\
+                                        "   FROM auto.w_anaylize_result ar "\
+                                        "  WHERE ar.dated = %s "\
+                                        "    AND ar.place = %s "\
+                                        "    AND ar.round = %s "\
+
+    # 画面表示用分析用 SQL
+    select_W_ANAYLIZE_RESULT_DETAIL_for_view = " SELECT ad.model_no モデル "\
+                                               "       ,ad.first_car １号車 "\
+                                               "       ,ad.second_car ２号車 "\
+                                               "       ,ad.third_car ３号車 "\
+                                               "       ,ad.fourth_car ４号車 "\
+                                               "       ,ad.fifth_car ５号車 "\
+                                               "       ,ad.sixth_car ６号車 "\
+                                               "       ,ad.seventh_car ７号車 "\
+                                               "       ,ad.eighth_car ８号車 "\
+                                               "   FROM auto.w_anaylize_result_detail ad "\
+                                               "  WHERE ad.dated = %s "\
+                                               "    AND ad.place = %s "\
+                                               "    AND ad.round = %s "\
+
+    # 分析用 SQL
+    insert_W_ANAYLIZE_RESULT = " INSERT INTO auto.w_anaylize_result ( "\
+                               "     dated, "\
+                               "     place, "\
+                               "     round, "\
+                               "     model_no, "\
+                               "     algorithm, "\
+                               "     algorithm_list, "\
+                               "     count_data, "\
+                               "     features, "\
+                               "     target, "\
+                               "     first_place, "\
+                               "     second_place, "\
+                               "     third_place, "\
+                               "     fourth_place, "\
+                               "     fifth_place, "\
+                               "     sixth_place, "\
+                               "     seventh_place, "\
+                               "     eighth_place "\
+                               " ) "\
+                               " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+
+    # 分析用 SQL
+    insert_W_ANAYLIZE_RESULT_DETAIL = " INSERT INTO auto.w_anaylize_result_detail ( "\
+                                      "     dated, "\
+                                      "     place, "\
+                                      "     round, "\
+                                      "     model_no, "\
+                                      "     first_car, "\
+                                      "     second_car, "\
+                                      "     third_car, "\
+                                      "     fourth_car, "\
+                                      "     fifth_car, "\
+                                      "     sixth_car, "\
+                                      "     seventh_car, "\
+                                      "     eighth_car "\
+                                      " ) "\
+                                      " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "

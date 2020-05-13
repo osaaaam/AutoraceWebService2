@@ -37,10 +37,10 @@ def scraped_insert(db_client, l_race_key):
 
 
 # 分析1（scikit-learnの回帰分析を使用し、各選手ごとに競争タイムを予測する）
-def anaylize_model1(algorithm, l_input, db_client, l_d_race_head, l_d_race_info, l_race_key):
-    anaylize_client = anaylize.Sklearn(algorithm)
-    output = "競争タイム"
+def anaylize_rule1(d_anaylize_model, db_client, l_d_race_head, l_d_race_info, l_race_key):
+    anaylize_client = anaylize.Sklearn(d_anaylize_model["アルゴリズム"])
     l_d_result = []
+    l_result_ori = []
     train_count = 0
     for i in range(len(l_d_race_info)):
         # 訓練データを準備
@@ -48,6 +48,8 @@ def anaylize_model1(algorithm, l_input, db_client, l_d_race_head, l_d_race_info,
             sql.Sql.select_train_data_for_anaylize,
             [l_d_race_info[i]["選手名"], l_d_race_head[0]["距離"], l_d_race_head[0]["走路状況"]]
         )
+        # 訓練データの件数
+        train_count += len(l_d_train_data)
         # テストデータを準備
         l_d_test_date = db_client.execute_select(
             sql.Sql.select_test_data_for_anaylize,
@@ -55,27 +57,43 @@ def anaylize_model1(algorithm, l_input, db_client, l_d_race_head, l_d_race_info,
         )
         # 実行
         l_result = anaylize_client.execute_anaylize(
-            l_d_train_data, l_d_test_date, output, l_input
+            l_d_train_data, l_d_test_date, d_anaylize_model["アウトプット"], d_anaylize_model["インプット"].split(",")
         )
-        # 返却値（競争タイム）を使用し、ヨーイドンからゴールまでのタイムを計算
-        goal_time = l_result[0] / 100 * (l_d_race_head[0]["距離"] + l_d_race_info[i]["ハンデ"])
-        # 辞書型をリストに格納
-        l_d_result.append({"車番": l_d_race_info[i]["車番"], "結果": goal_time})
-        # 訓練データの件数
-        train_count += len(l_d_train_data)
+        # 整形前の予測結果をリストに格納
+        l_result_ori.append(l_result[0])
+        # 予測結果整形
+        if d_anaylize_model["アウトプット"] == "競争タイム":
+            # 競争タイムから、ヨーイドンからゴールまでのタイムを計算
+            l_result[0] = l_result[0] / 100 * (l_d_race_head[0]["距離"] + l_d_race_info[i]["ハンデ"])
+        # 整形後の予測結果を、辞書型でリストに格納
+        l_d_result.append({"車番": l_d_race_info[i]["車番"], "予測結果": l_result[0]})
 
-    # 画面表示用に整形
-    l_d_result.sort(key=lambda x:x['結果'])
-    return {
-        "予測モデル": algorithm,
-        "学習件数": str(train_count) + "R",
-        "INPUT": l_input,
-        "OUTPUT": output,
-        "◎": l_d_result[0]["車番"],
-        "○": l_d_result[1]["車番"],
-        "▲": l_d_result[2]["車番"],
-        "△": l_d_result[3]["車番"]
-    }
+    # オリジナルの予測結果をDBへ取り込み（7車制を考慮）
+    l_result_ori.append(None)
+    l_result_ori = l_result_ori[:8]
+    db_client.execute_insert(
+        sql.Sql.insert_W_ANAYLIZE_RESULT_DETAIL,
+        l_race_key + [d_anaylize_model["モデル"]] + l_result_ori
+    )
+    # 整形後の予測結果をDBへ取り込み（7車制を考慮）
+    # 予測結果でソート
+    l_d_result.sort(key=lambda x:x['予測結果'])
+    l_car_no = []
+    for d_result in l_d_result:
+        l_car_no.append(d_result["車番"])
+    l_car_no.append(None)
+    db_client.execute_insert(
+        sql.Sql.insert_W_ANAYLIZE_RESULT,
+        l_race_key + [
+            d_anaylize_model["モデル"],
+            d_anaylize_model["アルゴリズム"],
+            None,
+            train_count,
+            d_anaylize_model["インプット"],
+            d_anaylize_model["アウトプット"]
+        ] + l_car_no[:8]
+    )
+    db_client.commit()
 
 
 def check_exist_data(l_d_race_head, l_d_race_info):
@@ -120,34 +138,25 @@ def lambda_handler(event, context):
             err_msg = message.Message.err3
             raise Exception(err_msg)
 
-        # 分析実行
-        try:
-            l_d_anaylize = []
-            l_d_anaylize.append(anaylize_model1(
-                "LinearRegression", ["試走タイム", "ポジション", "ハンデ前車数"],
-                db_client, l_d_race_head, l_d_race_info, l_race_key)
-            )
-            l_d_anaylize.append(anaylize_model1(
-                "LinearRegression", ["試走タイム", "車番", "ハンデ", "ポジション", "ハンデ前車数", "走路温度", "気温", "湿度"],
-                db_client, l_d_race_head, l_d_race_info, l_race_key)
-            )
-            l_d_anaylize.append(anaylize_model1(
-                "RandomForestRegressor", ["試走タイム", "車番", "ハンデ", "ポジション", "ハンデ前車数", "走路温度", "気温", "湿度"],
-                db_client, l_d_race_head, l_d_race_info, l_race_key)
-            )
-            l_d_anaylize.append(anaylize_model1(
-                "ElasticNet", ["試走タイム", "車番", "ハンデ", "ポジション", "ハンデ前車数", "走路温度", "気温", "湿度"],
-                db_client, l_d_race_head, l_d_race_info, l_race_key)
-            )
-            l_d_anaylize.append(anaylize_model1(
-                "RandomForestRegressor", ["車番", "ハンデ", "ポジション", "ハンデ前車数", "走路温度", "気温", "湿度"],
-                db_client, l_d_race_head, l_d_race_info, l_race_key)
-            )
-
-        except Exception as e:
-            print(str(e))
-            err_msg = message.Message.err4
-            raise Exception(err_msg)
+        # 分析済みレースか確認
+        l_d_anaylize_result = db_client.execute_select(sql.Sql.select_W_ANAYLIZE_RESULT_for_view, l_race_key)
+        l_d_anaylize_result_detail = db_client.execute_select(sql.Sql.select_W_ANAYLIZE_RESULT_DETAIL_for_view, l_race_key)
+        if len(l_d_anaylize_result) == 0:
+            # 分析方法をDBから取得
+            l_d_anaylize_model = db_client.execute_select(sql.Sql.select_M_ANAYLIZE_MODEL, [])
+            # 分析実行
+            try:
+                for d_anaylize_model in l_d_anaylize_model:
+                    anaylize_rule1(
+                        d_anaylize_model, db_client, l_d_race_head, l_d_race_info, l_race_key
+                    )
+                # 画面表示用に再セット
+                l_d_anaylize_result = db_client.execute_select(sql.Sql.select_W_ANAYLIZE_RESULT_for_view, l_race_key)
+                l_d_anaylize_result_detail = db_client.execute_select(sql.Sql.select_W_ANAYLIZE_RESULT_DETAIL_for_view, l_race_key)
+            except Exception as e:
+                print(str(e))
+                err_msg = message.Message.err4
+                raise Exception(err_msg)
 
         # レスポンス
         return {
@@ -159,7 +168,8 @@ def lambda_handler(event, context):
             'body': json.dumps({
                 "race_head": l_d_race_head,
                 "race_info": l_d_race_info,
-                "anaylize": l_d_anaylize
+                "anaylize": l_d_anaylize_result,
+                "anaylize_detail": l_d_anaylize_result_detail
             })
         }
 
