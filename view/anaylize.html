@@ -146,8 +146,10 @@
 
             <!-- レース情報 -->
             <table id="race_info" class="centered responsive-table from_json_to_table" style="margin-top: 60px;"></table>
-            <!-- レース情報 -->
+            <!-- 予測情報 -->
             <table id="anaylize" class="centered responsive-table from_json_to_table" style="margin-top: 60px;"></table>
+            <!-- 予測情報 -->
+            <table id="anaylize_detail" class="centered responsive-table from_json_to_table" style="margin-top: 60px;"></table>
 
         <!-- メイン -->
 
@@ -179,6 +181,7 @@
                     }else{
                         $("#race_info").empty();
                         $("#anaylize").empty();
+                        $("#anaylize_detail").empty();
                         $("#preloader").css('display','');
                         // レース情報取得
                         $.ajax({
@@ -193,6 +196,7 @@
                         .done( (response) => {
                             $("#race_info").append(from_json_to_table(response["race_info"]));
                             $("#anaylize").append(from_json_to_table(response["anaylize"]));
+                            $("#anaylize_detail").append(from_json_to_table(response["anaylize_detail"]));
                         })
                         .fail( (response) => {
                             if (response["status"] == 0){

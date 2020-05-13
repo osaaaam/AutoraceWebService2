@@ -4,6 +4,7 @@ from sklearn.linear_model import Ridge
 from sklearn.linear_model import Lasso
 from sklearn.linear_model import ElasticNet
 from sklearn.linear_model import LinearRegression
+from sklearn.svm import LinearSVC
 
 
 
@@ -24,6 +25,9 @@ class Sklearn:
         # 線形回帰
         elif mode == "LinearRegression":
             self.model = LinearRegression()
+        # 線形分離する識別
+        elif mode == "LinearSVC":
+            self.model = LinearSVC()
 
     def execute_anaylize(self, l_d_train_data, l_d_test_data, target, l_feature):
         # 訓練データをpandasにセット
@@ -39,7 +43,5 @@ class Sklearn:
         # 作成した学習モデルで、テストデータをinputで予測
         test_input = pd_df_test[l_feature]
         l_result = model.predict(test_input)
-
-        print(l_result)
 
         return l_result
