@@ -34,7 +34,6 @@
                 <ul class="gnav__menu">
                     <li class="gnav__menu__item"><a href="toppage.html">Top</a></li>
                     <li class="gnav__menu__item"><a href="raceinfo.html">RaceInfo</a></li>
-                    <!-- <li class="gnav__menu__item"><a href="raceinfo_history.html">RaceInfoHistory</a></li> -->
                     <li class="gnav__menu__item"><a href="anaylize.html">Anaylize</a></li>
                 </ul>
             </div>
@@ -144,6 +143,8 @@
                 </div>
             </div>
 
+            <!-- レースヘッダ -->
+            <table id="race_head" class="centered responsive-table from_json_to_table" style="margin-top: 60px;"></table>
             <!-- レース情報 -->
             <table id="race_info" class="centered responsive-table from_json_to_table" style="margin-top: 60px;"></table>
             <!-- 予測情報 -->
@@ -179,6 +180,7 @@
                     if ($("#inputDated").val() == "" || $("#inputPlace").val() == "" || $("#inputRound").val() == "") {
                         alert("検索条件を入力してください。");
                     }else{
+                        $("#race_head").empty();
                         $("#race_info").empty();
                         $("#anaylize").empty();
                         $("#anaylize_detail").empty();
@@ -194,6 +196,7 @@
                             }
                         })
                         .done( (response) => {
+                            $("#race_head").append(from_json_to_table(response["race_head"]));
                             $("#race_info").append(from_json_to_table(response["race_info"]));
                             $("#anaylize").append(from_json_to_table(response["anaylize"]));
                             $("#anaylize_detail").append(from_json_to_table(response["anaylize_detail"]));

@@ -36,11 +36,20 @@ class Dbaccess:
         # SQL実行
         self.cursor.execute(sql, l_param)
 
-    # insert文を実行
+    # delete文を実行
     def execute_delete(self, sql, l_param):
+        # SQL実行
+        self.cursor.execute(sql, l_param)
+
+    # update文を実行
+    def execute_update(self, sql, l_param):
         # SQL実行
         self.cursor.execute(sql, l_param)
 
     # コミット
     def commit(self):
         self.conn.commit()
+
+    # ロールバック
+    def rollback(self):
+        self.conn.rollback()

@@ -1,9 +1,7 @@
 ■画面
 toppage.html
 raceinfo.html
-raceinfo_history.html
 anaylize.html
-startboard.html
 
 
 ■フォルダ構成
@@ -17,20 +15,22 @@ AutoraceWebService
     lambda
         function
             api
-                get_raceinfo.py
-                get_raceinfo_history.py
-                get_anaylize.py
+                get_raceinfo.py（レース情報取得）
+                get_anaylize.py（分析結果取得）
+                get_place.py（本日の開催場取得）
+                get_rds_status.py（RDSの状態取得）
+                change_rds_status.py（RDSの起動停止）
             batch
-                daily.py
-                start_rds.py
-                end_rds.py
+                monthly-1.py（処理対象取得）
+                monthly-2.py（レース情報取り込み）
+                daily-1.py（RDS停止）
             module（自作モジュール置き場）
-                dbaccess.py（DBアクセス（psycopg2）クラス）
-                scraping.py（スクレイピング（bs）クラス）
-                anaylize.py（分析（sklearn）クラス）
-                message.py
-                sql.py
-                awsmanagement.py（rds操作クラス）
+                dbaccess.py（DBアクセス）
+                scraping.py（スクレイピング）
+                anaylize.py（分析）
+                message.py（メッセージ）
+                sql.py（SQL）
+                awsmanagement.py（AWS管理系）
             packages（外部モジュール置き場）
                 psycopg2
                 bs4
@@ -45,38 +45,39 @@ AutoraceWebService
 ■API構成
 raceinfo
     └ get（get_raceinfo.py）
-    history
-        └ get（get_raceinfo_history.py）
 anaylize
     └ get（get_anaylize.py）
 common
     place
         └ get（get_place.py）
+    rds
+        └ get（get_rds_status.py）
+        └ post（change_rds_status.py）
 
 
 ■テーブル一覧
-マスタ系
-・m_racer　（t_race_racerに所属入れてできれば消したい）
-・m_convert
-・m_anaylize_model
-表示用トラン
-・t_race_head
-・t_race_racer　（t_race_infoに変えたい）（所属もここに入れたい）（ランクいらない）（試走、ポジションもほしい）
-・t_race_result　（3連単複と2連単複のデータが逆）
-分析用トラン
-・t_race_racer2　（t_racerに変えたい）
+マスタ
+・m_convert（変換）
+・m_anaylize_model（分析モデル）
+トラン
+・t_race_head（レースヘッダ）
+・t_race_info（レース情報）
+・t_race_result（レース結果）
+・t_race_payoff（払い戻し）
+・t_monthly_log（月次処理ログ）
+ワーク
+・w_race_head（レースヘッダ）
+・w_race_info（レース情報）
+・w_anaylize_result_rank（予測順位）
+・w_anaylize_result_value（予測値）
+・w_place（開催レース場）
+作りたい（横視点データ）
 ・t_hande
+・t_racer
+・t_represent
 ・t_trialrun
+・t_deviation
+・t_position_x
+・t_position_y
 ・t_racetime
 ・t_starttime
-・t_position　（縦のポジションのTBLもほしい）
-・t_deviation　（データ取り直すなら作る）
-・t_represent　（データ取り直すなら作る）
-表示用ワーク
-・w_race_head
-・w_race_racer　（w_race_infoに変えたい）
-分析用ワーク
-・w_anaylize_result_rank
-・w_anaylize_result_value
-本日実施場ワーク
-・w_place

@@ -1,0 +1,20 @@
+CREATE TABLE auto2.w_anaylize_result_rank (
+    dated date,
+    place character varying(10),
+    round smallint,
+    model_no smallint,
+    algorithm character varying(100) NOT NULL,
+    algorithm_list character varying(2000),
+    count_data integer,
+    features character varying(2000) NOT NULL,
+    target character varying(50) NOT NULL,
+    first_place smallint,
+    second_place smallint,
+    third_place smallint,
+    fourth_place smallint,
+    fifth_place smallint,
+    sixth_place smallint,
+    seventh_place smallint,
+    eighth_place smallint,
+    PRIMARY KEY (dated, place, round, model_no)
+);

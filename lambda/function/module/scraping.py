@@ -48,7 +48,7 @@ class Scraping:
         return l_result
 
     # ヘッダー情報を取得
-    def get_header(self, soup):
+    def get_header(self, soup, l_hande):
         # レース名はタグ構成が異なるため単体で取得
         l_header_span = self.from_soup_to_list(soup, "span", ["table", "tr"], [0, 2], [])
         race_name = l_header_span[0] + " " + l_header_span[1] + "R"
@@ -66,72 +66,124 @@ class Scraping:
             l_header_td[3] = l_header_td[3][:-3]
         if l_header_td[4] is not None:
             l_header_td[4] = l_header_td[4][:-3]
-        return [race_name] + l_header_td
+        # 通常レースか7車制か取得
+        car_count = len(self.from_soup_to_list(soup, "a", ["table", "tr"], [3, 1], []))
+        race_system = str(car_count) + "車制"
+        # レース種別
+        race_type = "オープン戦"
+        for i in range(len(l_hande)):
+            if l_hande[i] is not None:
+                if l_hande[0] != l_hande[i]:
+                    race_type = "ハンデ戦"
+
+        return [race_name] + l_header_td + [race_system] + [race_type]
 
     # 同ハンデ内での内順を取得
-    def get_position(self, l_hande):
-        l_position = []
+    def get_position_x(self, l_hande):
+        l_position_x = []
         for i in range(len(l_hande)):
             # 1号車の場合
             if i == 0:
-                l_position.append(1)
+                l_position_x.append(1)
             # 2号車以降の場合
             else:
                 if l_hande[i] == l_hande[i-1]:
-                    l_position.append(l_position[i-1]+1)
+                    l_position_x.append(l_position_x[i-1]+1)
                 else:
-                    l_position.append(1)
-        return l_position
+                    l_position_x.append(1)
+        return l_position_x
+
+    # ハンデの少ない順を取得
+    def get_position_y(self, l_hande):
+        l_position_y = []
+        for i in range(len(l_hande)):
+            # 1号車の場合
+            if i == 0:
+                l_position_y.append(1)
+            # 2号車以降の場合
+            else:
+                if l_hande[i] == l_hande[i-1]:
+                    l_position_y.append(l_position_y[i-1])
+                else:
+                    l_position_y.append(l_position_y[i-1]+1)
+        return l_position_y
 
     # スクレイピング結果からレース情報を取得する
     # エラーになった場合は、[]を格納
     def get_raceinfo_by_url_program(self):
+
+        try:
+            soup = self.l_soup[0]
+            # ハンデ
+            self.out_l_hande = self.from_soup_to_list(soup, "td", ["table", "tr"], [4, 1], [0])
+            # 選手名
+            self.out_l_racer = self.from_soup_to_list(soup, "a", ["table", "tr"], [3, 1], [])
+            # 所属
+            self.out_l_represent = self.from_soup_to_list(soup, "td", ["table", "tr"], [4, 4], [0])
+            # 試走タイム
+            self.out_l_trialrun = self.from_soup_to_list(soup, "td", ["table", "tr"], [4, 2], [0])
+            # 試走偏差
+            self.out_l_deviation = self.from_soup_to_list(soup, "td", ["table", "tr"], [4, 3], [0])
+            # ポジション
+            self.out_l_position_x = self.get_position_x(self.out_l_hande)
+            # 縦ポジション
+            self.out_l_position_y = self.get_position_y(self.out_l_hande)
+            # ヘッダー
+            self.out_l_header = self.get_header(soup, self.out_l_hande)
+
+        except Exception as e:
+            print(str(e))
+            # 初期化
+            self.out_l_header = []
+            self.out_l_racer = []
+            self.out_l_hande = []
+            self.out_l_trialrun = []
+            self.out_l_deviation = []
+            self.out_l_represent = []
+            self.out_l_position_x = []
+            self.out_l_position_y = []
+            # エラーメッセージセット
+            self.out_err_msg = str(e)
+
+
+    # スクレイピング結果からレース結果を取得する
+    # エラーになった場合は、[]を格納
+    def get_raceresult_by_url_result(self):
         # 結果格納用
-        self.out_lists_header = []
-        self.out_lists_racer = []
-        self.out_lists_hande = []
-        self.out_lists_trialrun = []
-        self.out_lists_deviation = []
-        self.out_lists_represent = []
-        self.out_lists_position = []
+        self.out_l_rank = []
+        self.out_l_car_no = []
+        self.out_l_racetime = []
+        self.out_l_starttime = []
+        self.out_l_payoff = []
 
-        for i in range(len(self.l_soup)):
-            try:
-                soup = self.l_soup[i]
-                # ヘッダー
-                l_header = self.get_header(soup)
-                # 選手名
-                l_racer = self.from_soup_to_list(soup, "a", ["table", "tr"], [3, 1], [])
-                # 所属
-                l_represent = self.from_soup_to_list(soup, "td", ["table", "tr"], [4, 4], [0])
-                # ハンデ
-                l_hande = self.from_soup_to_list(soup, "td", ["table", "tr"], [4, 1], [0])
-                # 試走タイム
-                l_trialrun = self.from_soup_to_list(soup, "td", ["table", "tr"], [4, 2], [0])
-                # 試走偏差
-                l_deviation = self.from_soup_to_list(soup, "td", ["table", "tr"], [4, 3], [0])
-                # ポジション
-                l_position = self.get_position(l_hande)
-
+        try:
+            soup = self.l_soup[0]
+            # 車分だけループ（7車制対応）
+            car_count = len(self.from_soup_to_list(soup, "tr", ["table"], [3], []))-1
+            for i in range(car_count):
+                # 1着から、着順、車番、競争タイム、スタートタイムを取得
+                l_result_wk = self.from_soup_to_list(soup, "td", ["table", "tr"], [3, i+1], [10, 7, 6, 5, 4, 3, 1])
                 # 結果を格納
-                self.out_lists_header.append(l_header)
-                self.out_lists_racer.append(l_racer)
-                self.out_lists_represent.append(l_represent)
-                self.out_lists_hande.append(l_hande)
-                self.out_lists_trialrun.append(l_trialrun)
-                self.out_lists_deviation.append(l_deviation)
-                self.out_lists_position.append(l_position)
+                self.out_l_rank.append(l_result_wk[0])
+                self.out_l_car_no.append(l_result_wk[1])
+                self.out_l_racetime.append(l_result_wk[2])
+                self.out_l_starttime.append(l_result_wk[3])
 
-            except Exception as e:
-                print(str(e))
-                # []を格納
-                self.out_lists_header.append([])
-                self.out_lists_racer.append([])
-                self.out_lists_represent.append([])
-                self.out_lists_hande.append([])
-                self.out_lists_trialrun.append([])
-                self.out_lists_deviation.append([])
-                self.out_lists_position.append([])
+            # 払戻額を取得（3連単、3連複、2連単、2連複、単勝）
+            for i in [4, 5, 2, 3, 9]:
+                l_payoff = self.from_soup_to_list(soup, "td", ["table", "tr"], [5, i], [3, 1, 0])
+                self.out_l_payoff.append(l_payoff[0].replace(",","")[:-1])
+
+        except Exception as e:
+            print(str(e))
+            # 初期化
+            self.out_l_rank = []
+            self.out_l_car_no = []
+            self.out_l_racetime = []
+            self.out_l_starttime = []
+            self.out_l_payoff = []
+            # エラーメッセージセット
+            self.out_err_msg = str(e)
 
 
     # スクレイピング結果からレース場を取得する
@@ -153,5 +205,5 @@ class Scraping:
 
         except Exception as e:
             print(str(e))
-            # []を格納
+            # 初期化
             self.out_list_place = []
