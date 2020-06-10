@@ -48,7 +48,7 @@ class Scraping:
         return l_result
 
     # ヘッダー情報を取得
-    def get_header(self, soup):
+    def get_header(self, soup, l_hande):
         # レース名はタグ構成が異なるため単体で取得
         l_header_span = self.from_soup_to_list(soup, "span", ["table", "tr"], [0, 2], [])
         race_name = l_header_span[0] + " " + l_header_span[1] + "R"
@@ -68,8 +68,15 @@ class Scraping:
             l_header_td[4] = l_header_td[4][:-3]
         # 通常レースか7車制か取得
         car_count = len(self.from_soup_to_list(soup, "a", ["table", "tr"], [3, 1], []))
+        race_system = str(car_count) + "車制"
+        # レース種別
+        race_type = "オープン戦"
+        for i in range(len(l_hande)):
+            if l_hande[i] is not None:
+                if l_hande[0] != l_hande[i]:
+                    race_type = "ハンデ戦"
 
-        return [race_name] + l_header_td + [car_count]
+        return [race_name] + l_header_td + [race_system] + [race_type]
 
     # 同ハンデ内での内順を取得
     def get_position_x(self, l_hande):
@@ -107,14 +114,12 @@ class Scraping:
 
         try:
             soup = self.l_soup[0]
-            # ヘッダー
-            self.out_l_header = self.get_header(soup)
+            # ハンデ
+            self.out_l_hande = self.from_soup_to_list(soup, "td", ["table", "tr"], [4, 1], [0])
             # 選手名
             self.out_l_racer = self.from_soup_to_list(soup, "a", ["table", "tr"], [3, 1], [])
             # 所属
             self.out_l_represent = self.from_soup_to_list(soup, "td", ["table", "tr"], [4, 4], [0])
-            # ハンデ
-            self.out_l_hande = self.from_soup_to_list(soup, "td", ["table", "tr"], [4, 1], [0])
             # 試走タイム
             self.out_l_trialrun = self.from_soup_to_list(soup, "td", ["table", "tr"], [4, 2], [0])
             # 試走偏差
@@ -123,6 +128,8 @@ class Scraping:
             self.out_l_position_x = self.get_position_x(self.out_l_hande)
             # 縦ポジション
             self.out_l_position_y = self.get_position_y(self.out_l_hande)
+            # ヘッダー
+            self.out_l_header = self.get_header(soup, self.out_l_hande)
 
         except Exception as e:
             print(str(e))

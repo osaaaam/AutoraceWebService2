@@ -9,6 +9,7 @@ CREATE TABLE auto2.t_race_head (
     humidity smallint NOT NULL,
     runway_temperature smallint NOT NULL,
     runway_condition character varying(10) NOT NULL,
-    car_count smallint not null,
+    race_system character varying(10) NOT NULL,
+    race_type character varying(10) NOT NULL,
     PRIMARY KEY (dated, place, round)
 );

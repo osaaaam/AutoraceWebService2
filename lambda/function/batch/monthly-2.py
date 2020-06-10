@@ -32,7 +32,7 @@ def scraped_insert_info(db_client, l_race_key):
                     scraping_client.out_l_hande[i],
                     scraping_client.out_l_trialrun[i],
                     scraping_client.out_l_deviation[i],
-                    scraping_client.out_l_position[i],
+                    scraping_client.out_l_position_x[i],
                     scraping_client.out_l_position_y[i]
                 ]
                 db_client.execute_insert(sql.Sql.insert_T_RACE_INFO, l_param)

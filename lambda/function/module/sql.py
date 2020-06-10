@@ -13,9 +13,10 @@ class Sql:
                          "     humidity, "\
                          "     runway_temperature, "\
                          "     runway_condition, "\
-                         "     car_count "\
+                         "     race_system, "\
+                         "     race_type "\
                          " ) "\
-                         " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+                         " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
 
     # 挿入 レース情報
     insert_W_RACE_INFO = " INSERT INTO auto2.w_race_info ( "\
@@ -66,7 +67,8 @@ class Sql:
                                     "       ,rh.humidity 湿度 "\
                                     "       ,rh.runway_temperature 走路温度 "\
                                     "       ,rh.runway_condition 走路状況 "\
-                                    "       ,rh.car_count 車数 "\
+                                    "       ,rh.race_system 制度 "\
+                                    "       ,rh.race_type 種別 "\
                                     "   FROM auto2.w_race_head rh "\
                                     "  WHERE rh.dated = %s "\
                                     "    AND rh.place = %s "\
@@ -198,7 +200,8 @@ class Sql:
                                      "    AND rh.distance = %s "\
                                      "    AND rh.weather = %s "\
                                      "    AND rh.runway_condition = %s "\
-                                     "    AND rh.car_count = %s "\
+                                     "    AND rh.race_system = %s "\
+                                     "    AND rh.race_type = %s "
 
     # 選択 テストデータ
     select_test_data_for_anaylize = " SELECT ri.car_no 車番 "\
@@ -269,9 +272,10 @@ class Sql:
                          "     humidity, "\
                          "     runway_temperature, "\
                          "     runway_condition, "\
-                         "     car_count "\
+                         "     race_system, "\
+                         "     race_type "\
                          " ) "\
-                         " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+                         " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
 
     # 挿入 レース情報
     insert_T_RACE_INFO = " INSERT INTO auto2.t_race_info ( "\

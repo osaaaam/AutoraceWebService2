@@ -113,7 +113,8 @@ def anaylize_rule2(d_anaylize_model, db_client, l_d_race_head, l_d_race_info, l_
                 l_d_race_head[0]["距離"],
                 l_d_race_head[0]["天候"],
                 l_d_race_head[0]["走路状況"],
-                l_d_race_head[0]["車数"]
+                l_d_race_head[0]["制度"],
+                l_d_race_head[0]["種別"]
             ]
         )
         # 訓練データの件数取得
