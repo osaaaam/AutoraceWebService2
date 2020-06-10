@@ -20,7 +20,6 @@ def scraped_insert(db_client, dated):
         for place in scraping_client.out_list_place:
             l_param = [dated, place]
             db_client.execute_insert(sql.Sql.insert_W_PLACE, l_param)
-        db_client.commit()
         return True
 
 
@@ -45,6 +44,8 @@ def lambda_handler(event, context):
             err_msg = message.Message.err5
             raise Exception(err_msg)
 
+        db_client.commit()
+        
         # レスポンス
         return {
             "headers": {
