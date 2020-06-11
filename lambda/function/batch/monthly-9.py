@@ -1,5 +1,5 @@
-# 月次処理 - 1
-# RDS起動（15分くらいかかる）
+# 月次処理 - 9
+# RDS停止
 
 import json
 import os, sys
@@ -10,15 +10,15 @@ from module import message
 
 def lambda_handler(event, context):
     try:
-        # RDSが停止状態であれば、起動
+        # RDSが稼働中であれば、停止
         rds_client = awsmanagement.Rds()
         status = rds_client.get_status()
         if status == "available":
-            rds_client.start
-        elif status == "stopped":
             pass
+        elif status == "stopped":
+            rds_client.start
         else:
-            err_msg = message.Message.err6
+            err_msg = message.Message.err7
             raise Exception(err_msg)
 
         # レスポンス

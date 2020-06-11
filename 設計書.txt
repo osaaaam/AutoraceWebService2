@@ -4,7 +4,7 @@ raceinfo.html
 anaylize.html
 
 
-■フォルダ構成
+■ディレクトリ構成
 AutoraceWebService
     view
         ○○.html
@@ -21,8 +21,10 @@ AutoraceWebService
                 get_rds_status.py（RDSの状態取得）
                 change_rds_status.py（RDSの起動停止）
             batch
-                monthly-1.py（処理対象取得）
-                monthly-2.py（レース情報取り込み）
+                monthly-1.py（RDS起動）
+                monthly-2.py（処理対象取得）
+                monthly-3.py（レース情報取り込み）
+                monthly-9.py（RDS停止）
                 daily-1.py（RDS停止）
             module（自作モジュール置き場）
                 dbaccess.py（DBアクセス）
