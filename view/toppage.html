@@ -18,6 +18,12 @@
         <script src="js/common.js"></script>
 
         <style type="text/css">
+            /* トップページはフォントおしゃれに */
+            @import url('https://fonts.googleapis.com/css?family=Exo:400,700');
+            body{
+                font-family: 'Exo', sans-serif;
+            }
+
             .outer{
               display: table;
               width: 100vw;
@@ -39,86 +45,83 @@
               margin: 0!important;
               overflow-y: scroll;
             }
-            .pyonpyon span.m1 {
-                animation: pyon1 0.3s linear;
-                position: relative;
+
+            .circles{
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
             }
-            .pyonpyon span.m2 {
-                animation: pyon2 0.3s linear;
-                position: relative;
+            .circles li{
+                position: absolute;
+                display: block;
+                list-style: none;
+                width: 80px;
+                height: 80px;
+                animation: animate 25s linear infinite;
+                bottom: -80px;
             }
-            .pyonpyon span.m3 {
-                animation: pyon3 0.3s linear;
-                position: relative;
+            .circles li:nth-child(1){
+                left: 25%;
+                animation-delay: 0s;
+                animation-duration: 40s;
+                background: rgba(255, 255, 255, 0.5);
             }
-            .pyonpyon span.m4 {
-                animation: pyon4 0.3s linear;
-                position: relative;
+            .circles li:nth-child(2){
+                left: 10%;
+                animation-delay: 8s;
+                animation-duration: 35s;
+                background: rgba(255, 255, 255, 0.3);
             }
-            .pyonpyon span.m5 {
-                animation: pyon5 0.3s linear;
-                position: relative;
+            .circles li:nth-child(3){
+                left: 70%;
+                animation-delay: 10s;
+                animation-duration: 30s;
+                background: rgba(255, 0, 0, 0.4);
             }
-            .pyonpyon span.m6 {
-                animation: pyon6 0.3s linear;
-                position: relative;
+            .circles li:nth-child(4){
+                left: 35%;
+                animation-delay: 13s;
+                animation-duration: 35s;
+                background: rgba(0, 0, 255, 0.4);
             }
-            .pyonpyon span.m7 {
-                animation: pyon7 0.3s linear;
-                position: relative;
+            .circles li:nth-child(5){
+                left: 40%;
+                animation-delay: 17s;
+                animation-duration: 25s;
+                background: rgba(255, 255, 0, 0.4);
             }
-            @keyframes pyon1 {
-                0% {top: 0}
-                50% {top:-5px}
-                100%{top: 0}
+            .circles li:nth-child(6){
+                left: 65%;
+                animation-delay: 19s;
+                animation-duration: 30s;
+                background: rgba(173, 255, 47, 0.4);
             }
-            @keyframes pyon2 {
-                0% {top: 0}
-                50% {
-                    top:-5px;
-                    color: red;
+            .circles li:nth-child(7){
+                left: 75%;
+                animation-delay: 21s;
+                animation-duration: 20s;
+                background: rgba(255, 165, 0, 0.4);
+            }
+            .circles li:nth-child(8){
+                left: 50%;
+                animation-delay: 30s;
+                animation-duration: 10s;
+                background: rgba(255, 192, 203, 0.4);
+            }
+            @keyframes animate {
+                0%{
+                    transform: translateY(0) rotate(0deg);
+                    opacity: 1;
+                    border-radius: 25%;
                 }
-                100%{top: 0}
-            }
-            @keyframes pyon3 {
-                0% {top: 0}
-                50% {
-                    top:-5px;
-                    color: blue;
+                100%{
+                    transform: translateY(-1000px) rotate(720deg);
+                    opacity: 0;
+                    border-radius: 50%;
                 }
-                100%{top: 0}
-            }
-            @keyframes pyon4 {
-                0% {top: 0}
-                50% {
-                    top:-5px;
-                    color: greenyellow;
-                }
-                100%{top: 0}
-            }
-            @keyframes pyon5 {
-                0% {top: 0}
-                50% {
-                    top:-5px;
-                    color: yellow;
-                }
-                100%{top: 0}
-            }
-            @keyframes pyon6 {
-                0% {top: 0}
-                50% {
-                    top:-5px;
-                    color: orange;
-                }
-                100%{top: 0}
-            }
-            @keyframes pyon7 {
-                0% {top: 0}
-                50% {
-                    top:-5px;
-                    color: pink;
-                }
-                100%{top: 0}
             }
         </style>
 
@@ -136,7 +139,6 @@
                 <ul class="gnav__menu">
                     <li class="gnav__menu__item"><a href="toppage.html">Top</a></li>
                     <li class="gnav__menu__item"><a href="raceinfo.html">RaceInfo</a></li>
-                    <!-- <li class="gnav__menu__item"><a href="raceinfo_history.html">RaceInfoHistory</a></li> -->
                     <li class="gnav__menu__item"><a href="anaylize.html">Anaylize</a></li>
                 </ul>
             </div>
@@ -147,7 +149,20 @@
         <!-- メイン -->
         <div id="weather" class="carousel carousel-slider center"></div>
         <div class="outer">
-            <h1 class="inner"><span class="pyonpyon">AutoraceWebService</span></h1>
+            <h1 class="inner">AutoraceWebService</h1>
+            <!-- 背景のアニメーション部分 -->
+            <ul class="circles">
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
         </div>
         <!-- メイン -->
 
@@ -159,8 +174,7 @@
             $(function () {
                 // メニュー
                 setting_menu()
-                //クラス名が pyonpyon のクラスを跳ねさせる
-                randomCharactor("pyonpyon");
+                // 天気
                 getWeatherAll();
             });
 
@@ -217,31 +231,6 @@
                         '</div>';
                 }
                 return html
-            }
-
-            //ぴょんぴょん
-            function randomCharactor(c) {
-                //跳ねさせる要素をすべて取得
-                var randomChar = document.getElementsByClassName(c);
-                //for で総当たり
-                for (var i = 0; i < randomChar.length; i++) {
-                    //クロージャー
-                    (function (i) {
-                        //i 番目の要素、テキスト内容、文字列の長さを取得
-                        var randomCharI = randomChar[i];
-                        var randomCharIText = randomCharI.textContent;
-                        var randomCharLength = randomCharIText.length;
-                        //何番目の文字を跳ねさせるかをランダムで決める
-                        var Num = ~~(Math.random() * randomCharLength);
-                        //跳ねさせる文字を span タグで囲む、それ以外の文字と合わせて再び文字列を作る
-                        var newRandomChar = randomCharIText.substring(0, Num) + "<span class='m" + Math.floor(Math.random() * 7 + 1) + "'>" + randomCharIText.charAt(Num) + "</span>" + randomCharIText.substring(Num + 1, randomCharLength);
-                        randomCharI.innerHTML = newRandomChar;
-                        //アニメーションが終わったら再び関数を発火させる
-                        document.getElementsByClassName(c)[0].children[0].addEventListener("animationend", function () {
-                            randomCharactor(c)
-                        }, false)
-                    })(i)
-                }
             }
 
         </script>
