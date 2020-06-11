@@ -14,9 +14,9 @@ def lambda_handler(event, context):
         rds_client = awsmanagement.Rds()
         status = rds_client.get_status()
         if status == "available":
-            rds_client.start
-        elif status == "stopped":
             pass
+        elif status == "stopped":
+            rds_client.start()
         else:
             err_msg = message.Message.err6
             raise Exception(err_msg)
