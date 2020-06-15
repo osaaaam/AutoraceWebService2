@@ -2,12 +2,15 @@
 toppage.html
 raceinfo.html
 anaylize.html
+admin.html
 
 
 ■ディレクトリ構成
 AutoraceWebService
     view
         ○○.html
+            iframe
+                ○○.html
             css
                 ○○.css
             js
