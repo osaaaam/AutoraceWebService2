@@ -5,4 +5,4 @@ class Message:
     err4 = "ERROR: レース予測に失敗しました。"
     err5 = "ERROR: 本日は開催されていません。"
     err6 = "ERROR: RDS起動に失敗しました。"
-    err6 = "ERROR: RDS停止に失敗しました。"
+    err7 = "ERROR: RDS停止に失敗しました。"

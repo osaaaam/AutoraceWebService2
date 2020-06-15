@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <title>AutoraceWebService</title>
+        <!-- Googleアイコンフォントのインポート -->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!-- Materialize CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <!-- jquery -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <!-- Materialize JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <!-- モバイル向けに最適化 -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- 共通 -->
+        <link rel="stylesheet" type="text/css" href="css/common.css">
+        <script src="js/common.js"></script>
+
+        <style type="text/css">
+
+            .outer{
+              display: table;
+              width: 100vw;
+              height: 100vh;
+            }
+            .inner{
+              display: table-cell;
+              vertical-align: middle;
+              text-align: center;
+            }
+
+        </style>
+
+    </head>
+    <body>
+
+        <!-- メニュー -->
+        <a class="menu">
+            <span class="menu__line menu__line--top"></span>
+            <span class="menu__line menu__line--center"></span>
+            <span class="menu__line menu__line--bottom"></span>
+        </a>
+        <div class="gnav">
+            <div class="gnav__wrap">
+                <ul class="gnav__menu">
+                    <li class="gnav__menu__item"><a href="toppage.html">Top</a></li>
+                    <li class="gnav__menu__item"><a href="raceinfo.html">RaceInfo</a></li>
+                    <li class="gnav__menu__item"><a href="anaylize.html">Anaylize</a></li>
+                    <li class="gnav__menu__item"><a href="admin.html">Admin</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="hero"></div>
+        <!-- メニュー -->
+
+        <!-- メイン -->
+        <!-- Element Showed -->
+        <div>
+            <a id="menu" class="waves-effect waves-light btn btn-floating red lighten-3" style="margin:10px 0 0 10px;" onclick="$('.tap-target').tapTarget('open')" ><i class="material-icons">help</i></a>
+        </div>
+        <!-- Tap Target Structure -->
+        <div class="tap-target" data-target="menu">
+            <div class="tap-target-content">
+                <h5>Admin</h5>
+                <p>管理者メニュー</p>
+                <p>データベースの起動・停止が行えます。15分程かかります。</p>
+            </div>
+        </div>
+
+        <div class="outer">
+            <div class="inner">
+
+                <!-- preloader -->
+                <div id="preloader" class="row" style="visibility: visible;">
+                    <div class="col offset-s9 s1 offset-m9 m1">
+                        <div class="preloader-wrapper active">
+                            <div class="spinner-layer spinner-blue">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                            </div>
+                            <div class="spinner-layer spinner-red">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                            </div>
+                            <div class="spinner-layer spinner-yellow">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                            </div>
+                            <div class="spinner-layer spinner-green">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RDS電源スイッチ -->
+                <!-- パクってきたCSSと、Materialize.cssが喧嘩したため、iframeを使用 -->
+                <iframe id="ifrm" src="./iframe/dbswitch.html" scrolling="no" frameborder="0" style="height:50vh; width:100vw;"></iframe>
+            </div>
+        </div>
+        <!-- メイン -->
+
+        <script>
+
+            //初期設定
+            $(function () {
+                // メニュー
+                setting_menu()
+                // materialize
+                $('.tap-target').tapTarget();
+                $('.tap-target').tapTarget('open')
+                $(".tap-target-wrapper").css('position', 'fixed');
+                // RDSステータス確認
+                check_rds();
+                // 60秒おきにRDSステータス確認
+                setInterval(check_rds, 60000);
+            });
+
+            // iframe内のイベントを可能にする
+            $('#ifrm').on('load', function(e) {
+                var iframe = $("#ifrm").contents();
+                // 電源スイッチのイベント
+                iframe.find('#lever').change(function() {
+                    // 確認メッセージ
+                    if (iframe.find('#lever').prop('disabled')) {
+                        var message = "データベースの停止を行います。";
+                    } else {
+                        var message = "データベースの起動を行います。";
+                    }
+                    var result = window.confirm(message);
+                    if( result ) {
+                        // ローディング実行
+                        $("#preloader").css('visibility', 'visible');
+                        // 非活性
+                        iframe.find("#lever").prop('disabled', true);
+                        // RDS起動停止
+                        $.ajax({
+                            url:'https://ntg3gua04h.execute-api.ap-northeast-1.amazonaws.com/prod/common/rds',
+                            type:'POST'
+                        })
+                        .done( (response) => {
+                            // スイッチ変更
+                            this.classList.remove("pristine");
+                            let ac = "aria-checked";
+                            this.setAttribute(ac,this.getAttribute(ac) == "true" ? "false" : "true");
+                        })
+                        .fail( (response) => {
+                            alert("error!");
+                        })
+                    }
+                    // キャンセルしても電源スイッチのCSSで見た目が動いてしまう・・・
+                });
+            });
+
+            // RDSステータス確認
+            var check_rds = function(){
+                $.ajax({
+                    url:'https://ntg3gua04h.execute-api.ap-northeast-1.amazonaws.com/prod/common/rds',
+                    type:'GET'
+                })
+                .done( (response) => {
+                    var iframe = $("#ifrm").contents();
+                    if (response == "available"){
+                        // ローディング解除
+                        $("#preloader").css('visibility', 'hidden');
+                        // 活性
+                        iframe.find("#lever").prop('disabled', false);
+                        // 電源ON状態
+                        iframe.find('#lever').prop('checked', true);
+                    }
+                    else if (response == "stopped"){
+                        // ローディング解除
+                        $("#preloader").css('visibility', 'hidden');
+                        // 活性
+                        iframe.find("#lever").prop('disabled', false);
+                        // 電源OFF状態
+                        iframe.find('#lever').prop('checked', false);
+                    } else {
+                        // ローディング実行
+                        $("#preloader").css('visibility', 'visible');
+                        // 非活性
+                        iframe.find("#lever").prop('disabled', true);
+                    }
+                })
+                .fail( (response) => {
+                    alert("error!");
+                })
+            }
+
+        </script>
+    </body>
+</html>
