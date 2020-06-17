@@ -155,8 +155,9 @@
                 // 電源スイッチのイベント
                 iframe.find('#lever').change(function() {
                     // 確認メッセージ
-                    // クリックした瞬間にCSSでcheckedが変わってしまうため、以下のような条件になる
-                    if (iframe.find('#lever').prop('checked')) {
+                    // クリックした瞬間にcheckedが変わってしまうため、以下のような条件になる
+                    var check = iframe.find('#lever').prop('checked');
+                    if (check) {
                         var message = "データベースの起動を行います。";
                     } else {
                         var message = "データベースの停止を行います。";
@@ -182,8 +183,13 @@
                             alert("error!");
                         })
                     } else {
-                        // キャンセルしても電源スイッチのCSSで見た目が動いてしまうのでリダイレクト
-                        // location.href="admin.html";
+                        // キャンセルしてもcheckedが変わってしまうので、戻す
+                        if (check) {
+                            iframe.find('#lever').prop('checked', false);
+                        } else {
+                            iframe.find('#lever').prop('checked', true);
+                        }
+
                     }
                 });
             });
