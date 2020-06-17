@@ -36,7 +36,7 @@ function setting_place(){
     })
     .fail( (response) => {
         if (response["status"] == 0){
-            alert("error!");
+            alert("データベースを起動してください。");
         }else{
             alert(response["responseJSON"]);
         }
