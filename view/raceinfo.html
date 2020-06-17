@@ -172,7 +172,7 @@
             // 検索
             $(function () {
                 $("#btnSearch").click(function (e) {
-                    if ($("#inputDated").val() == "" || $("#inputPlace").val() == "" || $("#inputRound").val() == "") {
+                    if ($("#inputDated").val() == "" || $("#inputPlace").val() == "" || $("#inputPlace").val() == null || $("#inputRound").val() == "") {
                         alert("検索条件を入力してください。");
                     }else{
                         $("#race_head").empty();

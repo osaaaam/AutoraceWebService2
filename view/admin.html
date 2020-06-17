@@ -64,7 +64,10 @@
             <div class="tap-target-content">
                 <h5>Admin</h5>
                 <p>管理者メニュー</p>
-                <p>データベースの起動・停止が行えます。15分程かかります。</p>
+                <p>データベースの起動・停止が行えます。<br>
+                    ※10分くらいかかる。<br>
+                    ※稼働時間分課金されるため、起動した人が使用後停止する。
+                </p>
             </div>
         </div>
 
@@ -152,10 +155,11 @@
                 // 電源スイッチのイベント
                 iframe.find('#lever').change(function() {
                     // 確認メッセージ
-                    if (iframe.find('#lever').prop('disabled')) {
-                        var message = "データベースの停止を行います。";
-                    } else {
+                    // クリックした瞬間にCSSでcheckedが変わってしまうため、以下のような条件になる
+                    if (iframe.find('#lever').prop('checked')) {
                         var message = "データベースの起動を行います。";
+                    } else {
+                        var message = "データベースの停止を行います。";
                     }
                     var result = window.confirm(message);
                     if( result ) {
@@ -177,8 +181,10 @@
                         .fail( (response) => {
                             alert("error!");
                         })
+                    } else {
+                        // キャンセルしても電源スイッチのCSSで見た目が動いてしまうのでリダイレクト
+                        // location.href="admin.html";
                     }
-                    // キャンセルしても電源スイッチのCSSで見た目が動いてしまう・・・
                 });
             });
 
