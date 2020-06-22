@@ -1,20 +1,16 @@
-■画面
-toppage.html
-raceinfo.html
-anaylize.html
-admin.html
-
-
 ■ディレクトリ構成
 AutoraceWebService
     view
-        ○○.html
+        toppage.html
+        raceinfo.html
+        anaylize.html
+        admin.html
             iframe
-                ○○.html
+                dbswitch.html
             css
-                ○○.css
+                common.css
             js
-                ○○.js
+                common.js
     lambda
         function
             api

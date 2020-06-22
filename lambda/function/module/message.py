@@ -6,3 +6,4 @@ class Message:
     err5 = "ERROR: 本日は開催されていません。"
     err6 = "ERROR: RDS起動に失敗しました。"
     err7 = "ERROR: RDS停止に失敗しました。"
+    err8 = "ERROR: 条件にマッチした過去レースがありません。"

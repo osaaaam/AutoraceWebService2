@@ -110,8 +110,6 @@ def anaylize_rule2(d_anaylize_model, db_client, l_d_race_head, l_d_race_info, l_
             sql.Sql.select_train_data_for_anaylize,
             [
                 l_d_race_info[i]["選手名"],
-                l_d_race_head[0]["距離"],
-                l_d_race_head[0]["天候"],
                 l_d_race_head[0]["走路状況"],
                 l_d_race_head[0]["制度"],
                 l_d_race_head[0]["種別"]
@@ -232,7 +230,11 @@ def lambda_handler(event, context):
                 l_d_anaylize_result_detail = db_client.execute_select(sql.Sql.select_W_ANAYLIZE_RESULT_VALUE_for_view, l_race_key)
             except Exception as e:
                 print(str(e))
-                err_msg = message.Message.err4
+                # 該当する訓練データが存在しないことが原因のExceptionはここで
+                if str(e) == "'競争タイム'":
+                    err_msg = message.Message.err8
+                else:
+                    err_msg = message.Message.err4
                 raise Exception(err_msg)
 
         db_client.commit()
