@@ -230,7 +230,11 @@ def lambda_handler(event, context):
                 l_d_anaylize_result_detail = db_client.execute_select(sql.Sql.select_W_ANAYLIZE_RESULT_VALUE_for_view, l_race_key)
             except Exception as e:
                 print(str(e))
-                err_msg = message.Message.err4
+                # 該当する訓練データが存在しないことが原因のExceptionはここで
+                if str(e) == "'競争タイム'":
+                    err_msg = message.Message.err8
+                else:
+                    err_msg = message.Message.err4
                 raise Exception(err_msg)
 
         db_client.commit()
