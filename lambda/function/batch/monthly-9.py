@@ -13,7 +13,9 @@ def lambda_handler(event, context):
         # RDSが稼働中であれば、停止
         rds_client = awsmanagement.Rds()
         status = rds_client.get_status()
+        print("RDSの稼働状態：" + status)
         if status == "available":
+            print("RDS停止します。")
             rds_client.stop()
         elif status == "stopped":
             pass
