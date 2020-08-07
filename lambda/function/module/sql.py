@@ -238,7 +238,7 @@ class Sql:
                            "   FROM auto2.t_monthly_log "\
                            "  WHERE status = 0 "\
                            "  ORDER BY dated, place, round "\
-                           "  OFFSET 0 LIMIT 240 "
+                           "  OFFSET 0 LIMIT 120 "
 
     # 挿入 月次ログ
     insert_T_MONTHLY_LOG = " INSERT INTO auto2.t_monthly_log ( "\
