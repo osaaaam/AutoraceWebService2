@@ -100,7 +100,8 @@ class Sql:
                                                "   FROM auto2.w_anaylize_result_value av "\
                                                "  WHERE av.dated = %s "\
                                                "    AND av.place = %s "\
-                                               "    AND av.round = %s "
+                                               "    AND av.round = %s "\
+                                               "  ORDER BY av.model_no "
 
     # 選択 予測順位
     select_W_ANAYLIZE_RESULT_RANK_for_view = " SELECT ar.model_no モデル "\
@@ -115,7 +116,8 @@ class Sql:
                                         "   FROM auto2.w_anaylize_result_rank ar "\
                                         "  WHERE ar.dated = %s "\
                                         "    AND ar.place = %s "\
-                                        "    AND ar.round = %s "
+                                        "    AND ar.round = %s "\
+                                        "  ORDER BY ar.model_no "
 
 
     ##### 分析用 #####
