@@ -95,7 +95,7 @@ def anaylize_rule1(d_anaylize_model, db_client, l_d_race_head, l_d_race_info, l_
     )
 
 
-# 分析2（scikit-learnの回帰分析を使用し、各選手ごとに競争タイムを予測する）
+# 分析2（scikit-learnの回帰分析を使用し、各選手ごとに予測する）
 def anaylize_rule2(d_anaylize_model, db_client, l_d_race_head, l_d_race_info, l_race_key):
 
     l_d_result = []
@@ -110,9 +110,9 @@ def anaylize_rule2(d_anaylize_model, db_client, l_d_race_head, l_d_race_info, l_
             sql.Sql.select_train_data_for_anaylize,
             [
                 l_d_race_info[i]["選手名"],
-                l_d_race_head[0]["走路状況"],
-                l_d_race_head[0]["制度"],
-                l_d_race_head[0]["種別"]
+                l_d_race_head[0]["走路状況"]
+                # l_d_race_head[0]["制度"],
+                # l_d_race_head[0]["種別"]
             ]
         )
         # 訓練データの件数取得
@@ -126,6 +126,9 @@ def anaylize_rule2(d_anaylize_model, db_client, l_d_race_head, l_d_race_info, l_
         result = anaylize_client.execute_anaylize(
             l_d_train_data, l_d_test_date, d_anaylize_model["アウトプット"], d_anaylize_model["インプット"].split(",")
         )[0]
+        if d_anaylize_model["アウトプット"] == "着順":
+            # Int型で結果が返却されるため、float型にする
+            result = float(result)
         # 予測値をリストに格納
         l_result.append(result)
         # 予測値整形
