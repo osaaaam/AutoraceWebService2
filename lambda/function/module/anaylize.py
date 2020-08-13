@@ -5,6 +5,7 @@ from sklearn.linear_model import Lasso
 from sklearn.linear_model import ElasticNet
 from sklearn.linear_model import LinearRegression
 from sklearn.svm import LinearSVC
+from sklearn.neural_network import MLPClassifier
 
 
 
@@ -28,6 +29,9 @@ class Sklearn:
         # 線形分離する識別
         elif mode == "LinearSVC":
             self.model = LinearSVC()
+        # ニューラルネットワーク
+        elif mode == "MLPClassifier":
+            self.model = MLPClassifier()
 
     def execute_anaylize(self, l_d_train_data, l_d_test_data, target, l_feature):
         # 訓練データをpandasにセット

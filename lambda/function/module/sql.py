@@ -197,9 +197,9 @@ class Sql:
                                      "    AND ri.round = rr.round "\
                                      "    AND ri.car_no = rr.car_no "\
                                      "  WHERE ri.racer = %s "\
-                                     "    AND rh.runway_condition = %s "\
-                                     "    AND rh.race_system = %s "\
-                                     "    AND rh.race_type = %s "
+                                     "    AND rh.runway_condition = %s "
+                                     # "    AND rh.race_system = %s "\
+                                     # "    AND rh.race_type = %s "
 
     # 選択 テストデータ
     select_test_data_for_anaylize = " SELECT ri.car_no 車番 "\
