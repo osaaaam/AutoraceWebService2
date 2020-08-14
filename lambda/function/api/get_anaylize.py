@@ -109,6 +109,7 @@ def anaylize_rule2(d_anaylize_model, db_client, l_d_race_head, l_d_race_info, l_
         l_d_train_data = db_client.execute_select(
             sql.Sql.select_train_data_for_anaylize,
             [
+                l_race_key[0], #日付
                 l_d_race_info[i]["選手名"],
                 l_d_race_head[0]["走路状況"]
                 # l_d_race_head[0]["制度"],

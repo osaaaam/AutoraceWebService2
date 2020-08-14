@@ -198,7 +198,8 @@ class Sql:
                                      "    AND ri.place = rr.place "\
                                      "    AND ri.round = rr.round "\
                                      "    AND ri.car_no = rr.car_no "\
-                                     "  WHERE ri.racer = %s "\
+                                     "  WHERE ri.dated <> %s "\
+                                     "    AND ri.racer = %s "\
                                      "    AND rh.runway_condition = %s "
                                      # "    AND rh.race_system = %s "\
                                      # "    AND rh.race_type = %s "
