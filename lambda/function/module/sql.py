@@ -326,3 +326,63 @@ class Sql:
                            "     eighth_place "\
                           " ) "\
                           " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+
+
+    ##### テスト #####
+    # 選択 月次ログ
+    select_T_MONTHLY_LOG2 = " SELECT TO_CHAR(dated, 'yyyy-mm-dd') 開催日 "\
+                           "       ,place レース場 "\
+                           "       ,round ラウンド "\
+                           "   FROM auto2.t_monthly_log "\
+                           "  WHERE status = 1 "\
+                           "    AND TO_CHAR(dated, 'yyyy-mm') IN ('2020-04', '2020-05', '2020-06', '2020-07', '2020-08', '2020-09') "\
+                           "  ORDER BY dated DESC, place DESC, round DESC "\
+                           "  OFFSET 0 LIMIT 24 "
+
+    # 選択 レースヘッダ
+    select_T_RACE_HEAD = " SELECT rh.race_name レース "\
+                                    "       ,rh.distance 距離 "\
+                                    "       ,rh.weather 天候 "\
+                                    "       ,rh.temperature 気温 "\
+                                    "       ,rh.humidity 湿度 "\
+                                    "       ,rh.runway_temperature 走路温度 "\
+                                    "       ,rh.runway_condition 走路状況 "\
+                                    "       ,rh.race_system 制度 "\
+                                    "       ,rh.race_type 種別 "\
+                                    "   FROM auto2.t_race_head rh "\
+                                    "  WHERE rh.dated = %s "\
+                                    "    AND rh.place = %s "\
+                                    "    AND rh.round = %s "
+
+    # 選択 レース情報
+    select_T_RACE_INFO = " SELECT ri.car_no 車番 "\
+                                     "       ,ri.racer 選手名 "\
+                                     "       ,ri.represent 所属 "\
+                                     "       ,ri.hande ハンデ "\
+                                     "       ,ri.trialrun 試走タイム "\
+                                     "       ,ri.deviation 試走偏差 "\
+                                     "   FROM auto2.t_race_info ri "\
+                                     "  WHERE ri.dated = %s "\
+                                     "    AND ri.place = %s "\
+                                     "    AND ri.round = %s "\
+                                     "  ORDER BY ri.car_no "
+
+    # 選択 テストデータ
+    select_test_data_for_anaylize2 = " SELECT ri.car_no 車番 "\
+                                    "       ,ri.hande ハンデ "\
+                                    "       ,ri.trialrun 試走タイム "\
+                                    "       ,ri.deviation 試走偏差 "\
+                                    "       ,ri.position_x 横ポジション "\
+                                    "       ,ri.position_y 縦ポジション "\
+                                    "       ,rh.temperature 気温 "\
+                                    "       ,rh.humidity 湿度 "\
+                                    "       ,rh.runway_temperature 走路温度 "\
+                                    "   FROM auto2.t_race_info ri "\
+                                    "  INNER JOIN auto2.t_race_head rh "\
+                                    "     ON ri.dated = rh.dated "\
+                                    "    AND ri.place = rh.place "\
+                                    "    AND ri.round = rh.round "\
+                                    "  WHERE ri.dated = %s "\
+                                    "    AND ri.place = %s "\
+                                    "    AND ri.round = %s "\
+                                    "    AND ri.car_no = %s "
