@@ -327,6 +327,22 @@ class Sql:
                           " ) "\
                           " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
 
+    # 削除 月次選手ワーク
+    delete_W_MONTHLY_RACER = " DELETE FROM auto2.w_monthly_racer "
+
+    # 挿入 月次選手ワーク
+    insert_W_MONTHLY_RACER = " INSERT INTO auto2.w_monthly_racer "\
+                             " SELECT DISTINCT tri.racer "\
+                             " FROM auto2.t_race_info tri "
+
+    # 選択 月次選手ワーク
+    select_W_MONTHLY_RACER = " SELECT racer 選手名 "\
+                             "   FROM auto2.w_monthly_racer "
+
+    # 削除 月次選手ワーク
+    delete_W_MONTHLY_RACER_by_racer = " DELETE FROM auto2.w_monthly_racer "\
+                                      " WHERE racer = %s "
+
 
     ##### テスト #####
     # 選択 月次ログ
