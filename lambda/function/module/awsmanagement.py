@@ -32,9 +32,13 @@ class S3:
     s3_bucket = os.getenv('S3_BUCKET')
 
     def __init__(self):
-        # self.s3_client = boto3.client('s3')
+        self.s3_client = boto3.client('s3')
         self.s3_resource = boto3.resource('s3')
 
     def put_file(self, file_name, file_body):
         s3_obj = self.s3_resource.Object(self.s3_bucket, file_name)
         s3_obj.put(ACL="public-read-write", Body=file_body)
+
+    def get_file(self, file_name):
+        s3_obj = self.s3_client.get_object(Bucket=self.s3_bucket, Key=file_name)
+        return s3_obj['Body'].read().decode('utf-8').split()
