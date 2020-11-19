@@ -15,14 +15,18 @@ AutoraceWebService
         function
             api
                 get_raceinfo.py（レース情報取得）
-                get_anaylize.py（分析結果取得）
+                get_anaylize.py（分析結果取得_RDS）
                 get_place.py（本日の開催場取得）
                 get_rds_status.py（RDSの状態取得）
                 change_rds_status.py（RDSの起動停止）
+                get_anaylize_s3.py（分析結果取得_S3）
             batch
                 monthly-1.py（RDS起動）
-                monthly-2.py（処理対象取得）
+                monthly-2.py（処理対象レース取得）
                 monthly-3.py（レース情報取り込み）
+                monthly-4.py（レース予測取り込み）
+                monthly-5.py（処理対象選手取り込み）
+                monthly-6.py（訓練データファイル出力）
                 monthly-9.py（RDS停止）
                 daily-1.py（RDS停止）
             module（自作モジュール置き場）
@@ -48,6 +52,8 @@ raceinfo
     └ get（get_raceinfo.py）
 anaylize
     └ get（get_anaylize.py）
+    s3
+        └ get（get_anaylize_s3.py)
 common
     place
         └ get（get_place.py）
@@ -72,6 +78,7 @@ common
 ・w_anaylize_result_rank（予測順位）
 ・w_anaylize_result_value（予測値）
 ・w_place（開催レース場）
+・w_monthly_racer（月次処理対象選手）
 作りたい（横視点データ）
 ・t_hande
 ・t_racer
