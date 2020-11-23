@@ -42,3 +42,16 @@ class S3:
     def get_file(self, file_name):
         s3_obj = self.s3_client.get_object(Bucket=self.s3_bucket, Key=file_name)
         return s3_obj['Body'].read().decode('utf-8').split()
+
+    def get_filelist(self):
+        l_file = []
+        s3_list_objects = self.s3_client.list_objects_v2(Bucket=self.s3_bucket)
+        # 0件でなければ
+        if s3_list_objects['KeyCount'] != 0:
+            for s3_list_object in s3_list_objects['Contents']:
+                # フォルダ/ファイル名をappend
+                l_file.append(s3_list_object['Key'])
+        return l_file
+
+    def delete_file(self, file_name):
+        self.s3_client.delete_object(Bucket=self.s3_bucket, Key=file_name)
