@@ -41,7 +41,6 @@ def lambda_handler(event, context):
 
             else:
                 l_d_result = []
-                l_result = []
                 train_count = 0
 
                 for i in range(len(scraping_client.out_l_racer)):
@@ -49,7 +48,7 @@ def lambda_handler(event, context):
                     # S3から訓練データを準備
                     l_d_train_data = []
                     s3_client = awsmanagement.S3()
-                    for d_train_data in csv.DictReader(s3_client.get_file(scraping_client.out_l_racer[i] + ".csv")):
+                    for d_train_data in csv.DictReader(s3_client.get_file(scraping_client.out_l_racer[i] + ".csv", awsmanagement.S3.s3_bucket_data)):
                         l_d_train_data.append(d_train_data)
                     # 訓練データの件数取得
                     train_count += len(l_d_train_data)
@@ -75,23 +74,44 @@ def lambda_handler(event, context):
                         ["試走タイム","横ポジション","縦ポジション","走路温度"]
                     )[0]
 
-                    # 予測値をリストに格納
-                    l_result.append(result)
                     # 予測値整形
                     # 競争タイムから、ヨーイドンからゴールまでのタイムを計算
-                    # 競争タイム = 競争タイム ÷ 100 × (レース距離 + ハンデ)
-                    result = result / 100 * (int(scraping_client.out_l_header[1]) + int(scraping_client.out_l_hande[i]))
+                    # 競争タイム ÷ 100 × (レース距離 + ハンデ)
+                    result2 = result / 100 * (int(scraping_client.out_l_header[1]) + int(scraping_client.out_l_hande[i]))
                     # 着順を決める用に、辞書型でリストに格納
-                    l_d_result.append({"車番": i+1, "予測結果": result})
+                    l_d_result.append({"車番": i+1, "選手名": scraping_client.out_l_racer[i], "競争タイム": result, "並替用": result2})
 
                 # ソートして着順に車番を取得する
-                l_d_result.sort(key=lambda x:x['予測結果'])
-                l_car_no = []
-                for d_result in l_d_result:
-                    l_car_no.append(d_result["車番"])
+                l_d_result.sort(key=lambda x:x['並替用'])
 
-                print(l_car_no)
-                print()
+                # S3にcsvファイル出力
+                csv_value = ""
+                csv_value = csv_value + "訓練レース数" + ","
+                csv_value = csv_value + "車番" + ","
+                csv_value = csv_value + "選手名" + ","
+                csv_value = csv_value + "競争タイム" + "\n"
+                for i in range(8):
+                    csv_value = csv_value + str(train_count) + ","
+                    csv_value = csv_value + str(l_d_result["車番"]) + ","
+                    csv_value = csv_value + str(l_d_result["選手名"]) + ","
+                    csv_value = csv_value + str(l_d_result["競争タイム"]) + "\n"
+
+                # S3にUP
+                if place == "kawaguchi":
+                    place_kana = "川口"
+                elif place == "isesaki":
+                    place_kana = "伊勢崎"
+                elif place == "hamamatsu":
+                    place_kana = "浜松"
+                elif place == "iizuka":
+                    place_kana = "飯塚"
+                elif place == "sanyou":
+                    place_kana = "山陽"
+                else:
+                    place_kana = "その他"
+
+                s3_client = awsmanagement.S3()
+                s3_client.put_file(place_kana + "/" + round + "R.csv", csv_value, awsmanagement.S3.s3_bucket_data_anaylize)
 
         # レスポンス
         return {
