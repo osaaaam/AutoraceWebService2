@@ -31,7 +31,7 @@ def lambda_handler(event, context):
                 err_msg = "8車制のレースのみ予測可能です"
                 raise Exception(err_msg)
 
-            elif scraping_client.out_l_trialrun[i] == "":
+            elif scraping_client.out_l_trialrun[0] == "":
                 err_msg = "試走タイム発表後に予測可能です"
                 raise Exception(err_msg)
 
@@ -90,11 +90,11 @@ def lambda_handler(event, context):
                 csv_value = csv_value + "車番" + ","
                 csv_value = csv_value + "選手名" + ","
                 csv_value = csv_value + "競争タイム" + "\n"
-                for i in range(8):
+                for i in range(len(l_d_result):
                     csv_value = csv_value + str(train_count) + ","
-                    csv_value = csv_value + str(l_d_result["車番"]) + ","
-                    csv_value = csv_value + str(l_d_result["選手名"]) + ","
-                    csv_value = csv_value + str(l_d_result["競争タイム"]) + "\n"
+                    csv_value = csv_value + str(l_d_result[i]["車番"]) + ","
+                    csv_value = csv_value + str(l_d_result[i]["選手名"]) + ","
+                    csv_value = csv_value + str(l_d_result[i]["競争タイム"]) + "\n"
 
                 # S3にUP
                 if place == "kawaguchi":
