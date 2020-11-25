@@ -10,7 +10,7 @@ def lambda_handler(event, context):
 
         # S3からレース情報のファイル名一覧を取得
         s3_client = awsmanagement.S3()
-        l_file = s3_client.get_filelist()
+        l_file = s3_client.get_filelist(awsmanagement.S3.s3_bucket_data_daily)
         l_d_race_key = []
         for file in l_file:
             # フォルダ名とファイル名を分割

@@ -14,9 +14,9 @@ def lambda_handler(event, context):
 
         # 昨日分のレース情報ファイルを削除
         s3_client = awsmanagement.S3()
-        l_file = s3_client.get_filelist()
+        l_file = s3_client.get_filelist(awsmanagement.S3.s3_bucket_data_daily)
         for file_name in l_file:
-            s3_client.delete_file(file_name)
+            s3_client.delete_file(file_name, awsmanagement.S3.s3_bucket_data_daily)
 
         # 今日を取得
         today = datetime.datetime.today()
@@ -65,7 +65,7 @@ def lambda_handler(event, context):
                         else:
                             place_kana = "その他"
 
-                        s3_client.put_file(place_kana + "/" + round + "R.csv", csv_value)
+                        s3_client.put_file(place_kana + "/" + round + "R.csv", csv_value, awsmanagement.S3.s3_bucket_data_daily)
 
         # レスポンス
         return {
