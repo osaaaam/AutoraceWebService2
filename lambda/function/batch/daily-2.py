@@ -52,7 +52,20 @@ def lambda_handler(event, context):
                             csv_value = csv_value + str(scraping_client.out_l_position_y[i]) + "\n"
 
                         # S3にUP
-                        s3_client.put_file("daily/" + place + "/" + round + "R.csv", csv_value)
+                        if place == "kawaguchi":
+                            place_kana = "川口"
+                        elif place == "isesaki":
+                            place_kana = "伊勢崎"
+                        elif place == "hamamatsu":
+                            place_kana = "浜松"
+                        elif place == "iizuka":
+                            place_kana = "飯塚"
+                        elif place == "sanyou":
+                            place_kana = "山陽"
+                        else:
+                            place_kana = "その他"
+
+                        s3_client.put_file(place_kana + "/" + round + "R.csv", csv_value)
 
         # レスポンス
         return {

@@ -58,6 +58,8 @@ anaylize
 common
     place
         └ get（get_place.py）
+        s3
+            └ get（get_place_s3.py)
     rds
         └ get（get_rds_status.py）
         └ post（change_rds_status.py）
