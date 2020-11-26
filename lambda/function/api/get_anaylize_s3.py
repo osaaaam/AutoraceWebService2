@@ -79,7 +79,7 @@ def lambda_handler(event, context):
                     # 競争タイム ÷ 100 × (レース距離 + ハンデ)
                     result2 = result / 100 * (int(scraping_client.out_l_header[1]) + int(scraping_client.out_l_hande[i]))
                     # 着順を決める用に、辞書型でリストに格納
-                    l_d_result.append({"車番": i+1, "選手名": scraping_client.out_l_racer[i], "競争タイム": result, "並替用": result2})
+                    l_d_result.append({"車番": str(i+1), "選手名": scraping_client.out_l_racer[i], "競争タイム": str(result), "並替用": result2})
 
                 # ソートして着順に車番を取得する
                 l_d_result.sort(key=lambda x:x['並替用'])
@@ -90,10 +90,10 @@ def lambda_handler(event, context):
                 csv_value = csv_value + "車番" + ","
                 csv_value = csv_value + "選手名" + ","
                 csv_value = csv_value + "競争タイム" + "\n"
-                for i in range(len(l_d_result):
+                for i in range(len(l_d_result)):
                     csv_value = csv_value + str(train_count) + ","
                     csv_value = csv_value + str(l_d_result[i]["車番"]) + ","
-                    csv_value = csv_value + str(l_d_result[i]["選手名"]) + ","
+                    csv_value = csv_value + l_d_result[i]["選手名"] + ","
                     csv_value = csv_value + str(l_d_result[i]["競争タイム"]) + "\n"
 
                 # S3にUP
@@ -117,7 +117,9 @@ def lambda_handler(event, context):
         return {
             'statusCode': 200,
             'body': json.dumps({
-                "message": "ok"
+                "message": "ok",
+                "TrainCount": str(train_count),
+                "Anaylize": l_d_result
             })
         }
 
