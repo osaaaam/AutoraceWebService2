@@ -26,7 +26,8 @@ def lambda_handler(event, context):
         return {
             'statusCode': 200,
             'body': json.dumps({
-                "RaceKey" : l_d_race_key,
+                "message": "ok",
+                "RaceKey": l_d_race_key,
                 "RaceInfo": [
                     {"place":"kawaguchi", "round":"1", "hande":"10"},
                     {"place":"kawaguchi", "round":"2", "hande":"20"},
@@ -44,7 +45,9 @@ def lambda_handler(event, context):
                 "Access-Control-Allow-Credentials": "true"
             },
             'statusCode': 400,
-            'body': json.dumps(str(e))
+            'body': json.dumps({
+                "message": str(e)
+            })
         }
 
     # finally:

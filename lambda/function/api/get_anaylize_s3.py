@@ -116,7 +116,9 @@ def lambda_handler(event, context):
         # レスポンス
         return {
             'statusCode': 200,
-            'body': json.dumps("ok")
+            'body': json.dumps({
+                "message": "ok"
+            })
         }
 
     except Exception as e:
@@ -128,7 +130,9 @@ def lambda_handler(event, context):
                 "Access-Control-Allow-Credentials": "true"
             },
             'statusCode': 400,
-            'body': json.dumps(str(e))
+            'body': json.dumps({
+                "message": str(e)
+            })
         }
 
     # finally:
