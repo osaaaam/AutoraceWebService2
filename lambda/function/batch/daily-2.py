@@ -39,14 +39,16 @@ def lambda_handler(event, context):
                     if scraping_client.out_l_header[7] == "8車制":
                         # S3にcsvファイル出力
                         csv_value = ""
-                        csv_value = csv_value + "車番" + ","
-                        csv_value = csv_value + "選手名" + ","
-                        csv_value = csv_value + "ハンデ" + ","
-                        csv_value = csv_value + "横ポジション" + ","
-                        csv_value = csv_value + "縦ポジション" + "\n"
+                        csv_value = csv_value + "place" + ","
+                        csv_value = csv_value + "round" + ","
+                        csv_value = csv_value + "car_no" + ","
+                        csv_value = csv_value + "hande" + ","
+                        csv_value = csv_value + "position_x" + ","
+                        csv_value = csv_value + "position_y" + "\n"
                         for i in range(8):
+                            csv_value = csv_value + place + ","
+                            csv_value = csv_value + round + ","
                             csv_value = csv_value + str(i+1) + ","
-                            csv_value = csv_value + str(scraping_client.out_l_racer[i]) + ","
                             csv_value = csv_value + str(scraping_client.out_l_hande[i]) + ","
                             csv_value = csv_value + str(scraping_client.out_l_position_x[i]) + ","
                             csv_value = csv_value + str(scraping_client.out_l_position_y[i]) + "\n"

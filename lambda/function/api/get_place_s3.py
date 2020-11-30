@@ -22,17 +22,19 @@ def lambda_handler(event, context):
             }
             l_d_race_key.append(d_race_key)
 
+        # S3からファイル情報を取得
+        l_d_race_hande = []
+        for file in l_file:
+            for d_race_hande in csv.DictReader(s3_client.get_file(file, awsmanagement.S3.s3_bucket_data_daily)):
+                l_d_race_hande.append(d_race_hande)
+
         # レスポンス
         return {
             'statusCode': 200,
             'body': json.dumps({
                 "message": "ok",
                 "RaceKey": l_d_race_key,
-                "RaceInfo": [
-                    {"place":"kawaguchi", "round":"1", "hande":"10"},
-                    {"place":"kawaguchi", "round":"2", "hande":"20"},
-                    {"place":"isesaki", "round":"1", "hande":"10"}
-                ]
+                "RaceHande": l_d_race_hande
             })
         }
 
