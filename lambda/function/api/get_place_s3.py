@@ -22,11 +22,17 @@ def lambda_handler(event, context):
             }
             l_d_race_key.append(d_race_key)
 
-        # S3からファイル情報を取得
+        # S3からハンデ情報を取得
         l_d_race_hande = []
         for file in l_file:
             for d_race_hande in csv.DictReader(s3_client.get_file(file, awsmanagement.S3.s3_bucket_data_daily)):
                 l_d_race_hande.append(d_race_hande)
+
+        # S3から予測履歴情報を取得
+        file = "history.csv"
+        l_d_history = []
+        for d_history in csv.DictReader(s3_client.get_file(file, awsmanagement.S3.s3_bucket_data_history)):
+            l_d_history.append(d_history)
 
         # レスポンス
         return {
@@ -34,7 +40,8 @@ def lambda_handler(event, context):
             'body': json.dumps({
                 "message": "ok",
                 "RaceKey": l_d_race_key,
-                "RaceHande": l_d_race_hande
+                "RaceHande": l_d_race_hande,
+                "History": l_d_history
             })
         }
 

@@ -19,7 +19,7 @@ AutoraceWebService
                 get_place.py（本日の開催場取得）
                 get_rds_status.py（RDSの状態取得）
                 change_rds_status.py（RDSの起動停止）
-                get_place_s3.py（本日の開催場取得_S3）
+                get_place_s3.py（本日の開催場取得_S3）（変更予定→get_loading_s3.py）
                 get_anaylize_s3.py（分析&ファイル生成_S3）
                 get_anaylize_result_s3（分析ファイル取得_S3）
             batch
@@ -67,6 +67,13 @@ common
     rds
         └ get（get_rds_status.py）
         └ post（change_rds_status.py）
+ios（移植予定）
+    anaylize
+        └ get（get_anaylize_s3.py)
+        result
+            └ get（get_anaylize_result_s3.py)
+    loading
+        └ get（get_loading_s3.py)
 
 
 ■テーブル一覧

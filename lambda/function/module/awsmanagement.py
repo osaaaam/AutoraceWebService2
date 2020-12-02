@@ -32,6 +32,7 @@ class S3:
     s3_bucket_data = os.getenv('S3_BUCKET_DATA')
     s3_bucket_data_daily = os.getenv('S3_BUCKET_DATA_DAILY')
     s3_bucket_data_anaylize = os.getenv('S3_BUCKET_DATA_ANAYLIZE')
+    s3_bucket_data_history = os.getenv('S3_BUCKET_DATA_HISTORY')
 
     def __init__(self):
         self.s3_client = boto3.client('s3')
