@@ -1,4 +1,5 @@
 import json
+import datetime
 import os, sys
 import csv
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -11,9 +12,13 @@ from module import scraping
 def lambda_handler(event, context):
     try:
         # パラム取得
-        dated = event["queryStringParameters"]["dated"]
+        # dated = event["queryStringParameters"]["dated"]
         place = event["queryStringParameters"]["place"]
         round = event["queryStringParameters"]["round"]
+
+        # 今日を取得（日付はLambdaで取得するよう統一）
+        today = datetime.datetime.today()
+        dated = today.strftime("%Y-%m-%d")
 
         # スクレイピング
         url = scraping.Scraping.url_program
@@ -31,7 +36,7 @@ def lambda_handler(event, context):
                 err_msg = message.Message.ios_err02
                 raise Exception(err_msg)
 
-            elif scraping_client.out_l_trialrun[0] == "":
+            elif scraping_client.out_l_trialrun[0] == None:
                 err_msg = message.Message.ios_err03
                 raise Exception(err_msg)
 
