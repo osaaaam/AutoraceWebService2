@@ -18,6 +18,11 @@ def lambda_handler(event, context):
         for file_name in l_file:
             s3_client.delete_file(file_name, awsmanagement.S3.s3_bucket_data_daily)
 
+        # 昨日分のレース分析結果ファイルを削除
+        l_file = s3_client.get_filelist(awsmanagement.S3.s3_bucket_data_anaylize)
+        for file_name in l_file:
+            s3_client.delete_file(file_name, awsmanagement.S3.s3_bucket_data_anaylize)
+
         # 今日を取得
         today = datetime.datetime.today()
         dated = today.strftime("%Y-%m-%d")

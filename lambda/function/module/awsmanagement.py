@@ -29,7 +29,7 @@ class Rds:
 
 class S3:
     # S3バケット名取得
-    s3_bucket_data = os.getenv('S3_BUCKET_DATA')
+    s3_bucket_data_train = os.getenv('S3_BUCKET_DATA_TRAIN')
     s3_bucket_data_daily = os.getenv('S3_BUCKET_DATA_DAILY')
     s3_bucket_data_anaylize = os.getenv('S3_BUCKET_DATA_ANAYLIZE')
     s3_bucket_data_history = os.getenv('S3_BUCKET_DATA_HISTORY')

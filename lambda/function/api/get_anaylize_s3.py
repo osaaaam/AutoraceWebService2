@@ -21,22 +21,22 @@ def lambda_handler(event, context):
         scraping_client.get_raceinfo_by_url_program()
         # スクレイピング結果が格納されていなかった場合、エラー
         if len(scraping_client.out_l_header) == 0:
-            err_msg = message.Message.err3
+            err_msg = message.Message.ios_err01
             raise Exception(err_msg)
 
         else:
             # 分析開始
             anaylize_client = anaylize.Sklearn("RandomForestRegressor")
             if scraping_client.out_l_header[7] != "8車制":
-                err_msg = "8車制のレースのみ予測可能です"
+                err_msg = message.Message.ios_err02
                 raise Exception(err_msg)
 
             elif scraping_client.out_l_trialrun[0] == "":
-                err_msg = "試走タイム発表後に予測可能です"
+                err_msg = message.Message.ios_err03
                 raise Exception(err_msg)
 
             elif scraping_client.out_l_header[6] != "良走路":
-                err_msg = "良走路のレースのみ予測可能です"
+                err_msg = message.Message.ios_err04
                 raise Exception(err_msg)
 
             else:
@@ -48,7 +48,7 @@ def lambda_handler(event, context):
                     # S3から訓練データを準備
                     l_d_train_data = []
                     s3_client = awsmanagement.S3()
-                    for d_train_data in csv.DictReader(s3_client.get_file(scraping_client.out_l_racer[i] + ".csv", awsmanagement.S3.s3_bucket_data)):
+                    for d_train_data in csv.DictReader(s3_client.get_file(scraping_client.out_l_racer[i] + ".csv", awsmanagement.S3.s3_bucket_data_train)):
                         l_d_train_data.append(d_train_data)
                     # 訓練データの件数取得
                     train_count += len(l_d_train_data)
@@ -110,7 +110,6 @@ def lambda_handler(event, context):
                 else:
                     place_kana = "その他"
 
-                s3_client = awsmanagement.S3()
                 s3_client.put_file(place_kana + "/" + round + "R.csv", csv_value, awsmanagement.S3.s3_bucket_data_anaylize)
 
         # レスポンス
