@@ -26,8 +26,8 @@ AutoraceWebService
                 monthly-1.py（RDS起動）
                 monthly-2.py（処理対象レース取得）
                 monthly-3.py（レース情報取り込み）
-                monthly-4.py（レース予測取り込み）
-                monthly-5.py（処理対象選手取り込み）
+                monthly-5.py（処理対象選手取得）
+                monthly-6.py（訓練データ出力）
                 monthly-9.py（RDS停止）
                 daily-1.py（RDS停止）
                 daily-2.py（本日のレース情報ファイル出力）
