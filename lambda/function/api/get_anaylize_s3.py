@@ -30,8 +30,7 @@ def lambda_handler(event, context):
             raise Exception(err_msg)
 
         else:
-            # 分析開始
-            anaylize_client = anaylize.Sklearn("RandomForestRegressor")
+            # エラーチェック
             if scraping_client.out_l_header[7] != "8車制":
                 err_msg = message.Message.ios_err02
                 raise Exception(err_msg)
@@ -45,6 +44,12 @@ def lambda_handler(event, context):
                 raise Exception(err_msg)
 
             else:
+                # 分析開始
+                if int(max(scraping_client.out_l_position_x)) > 4:
+                    anaylize_client = anaylize.Sklearn("RandomForestRegressor")
+                else:
+                    anaylize_client = anaylize.Sklearn("LinearRegression")
+
                 l_d_result = []
                 train_count = 0
 
