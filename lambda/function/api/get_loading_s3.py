@@ -34,6 +34,12 @@ def lambda_handler(event, context):
         for d_history in csv.DictReader(s3_client.get_file(file, awsmanagement.S3.s3_bucket_data_history)):
             l_d_history.append(d_history)
 
+        # S3から設定ファイル数を取得
+        file = "setting.csv"
+        l_d_setting = []
+        for d_setting in csv.DictReader(s3_client.get_file(file, awsmanagement.S3.s3_bucket_data_history)):
+            l_d_setting.append(d_setting)
+
         # レスポンス
         return {
             'statusCode': 200,
@@ -41,7 +47,8 @@ def lambda_handler(event, context):
                 "message": "ok",
                 "RaceKey": l_d_race_key,
                 "RaceHande": l_d_race_hande,
-                "History": l_d_history
+                "History": l_d_history,
+                "Setting": l_d_setting
             })
         }
 
