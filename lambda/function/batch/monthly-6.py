@@ -63,7 +63,7 @@ def lambda_handler(event, context):
 
                 # S3にUP
                 s3_client = awsmanagement.S3()
-                s3_client.put_file(d_target["選手名"] + ".csv", csv_value)
+                s3_client.put_file(d_target["選手名"] + ".csv", csv_value, awsmanagement.S3.s3_bucket_data_train)
 
             # 選手ワークテーブルを削除
             db_client.execute_delete(sql.Sql.delete_W_MONTHLY_RACER_by_racer, [d_target["選手名"]])

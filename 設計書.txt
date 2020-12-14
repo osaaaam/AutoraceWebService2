@@ -19,16 +19,18 @@ AutoraceWebService
                 get_place.py（本日の開催場取得）
                 get_rds_status.py（RDSの状態取得）
                 change_rds_status.py（RDSの起動停止）
-                get_anaylize_s3.py（分析結果取得_S3）
+                get_loading_s3.py（iOSアプリローディング_S3）
+                get_anaylize_s3.py（分析&ファイル生成_S3）
             batch
                 monthly-1.py（RDS起動）
                 monthly-2.py（処理対象レース取得）
                 monthly-3.py（レース情報取り込み）
-                monthly-4.py（レース予測取り込み）
-                monthly-5.py（処理対象選手取り込み）
-                monthly-6.py（訓練データファイル出力）
+                monthly-5.py（処理対象選手取得）
+                monthly-6.py（訓練データ出力）
                 monthly-9.py（RDS停止）
                 daily-1.py（RDS停止）
+                daily-2.py（本日のレース情報ファイル出力）
+                try_anaylize.py（分析テスト）
             module（自作モジュール置き場）
                 dbaccess.py（DBアクセス）
                 scraping.py（スクレイピング）
@@ -52,14 +54,17 @@ raceinfo
     └ get（get_raceinfo.py）
 anaylize
     └ get（get_anaylize.py）
-    s3
-        └ get（get_anaylize_s3.py)
 common
     place
         └ get（get_place.py）
     rds
         └ get（get_rds_status.py）
         └ post（change_rds_status.py）
+ios
+    anaylize
+        └ get（get_anaylize_s3.py)
+    loading
+        └ get（get_loading_s3.py)
 
 
 ■テーブル一覧

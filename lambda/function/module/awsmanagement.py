@@ -29,16 +29,32 @@ class Rds:
 
 class S3:
     # S3バケット名取得
-    s3_bucket = os.getenv('S3_BUCKET')
+    s3_bucket_data_train = os.getenv('S3_BUCKET_DATA_TRAIN')
+    s3_bucket_data_daily = os.getenv('S3_BUCKET_DATA_DAILY')
+    s3_bucket_data_anaylize = os.getenv('S3_BUCKET_DATA_ANAYLIZE')
+    s3_bucket_data_history = os.getenv('S3_BUCKET_DATA_HISTORY')
 
     def __init__(self):
         self.s3_client = boto3.client('s3')
         self.s3_resource = boto3.resource('s3')
 
-    def put_file(self, file_name, file_body):
-        s3_obj = self.s3_resource.Object(self.s3_bucket, file_name)
+    def put_file(self, file_name, file_body, s3_bucket):
+        s3_obj = self.s3_resource.Object(s3_bucket, file_name)
         s3_obj.put(ACL="public-read-write", Body=file_body)
 
-    def get_file(self, file_name):
-        s3_obj = self.s3_client.get_object(Bucket=self.s3_bucket, Key=file_name)
+    def get_file(self, file_name, s3_bucket):
+        s3_obj = self.s3_client.get_object(Bucket=s3_bucket, Key=file_name)
         return s3_obj['Body'].read().decode('utf-8').split()
+
+    def get_filelist(self, s3_bucket):
+        l_file = []
+        s3_list_objects = self.s3_client.list_objects_v2(Bucket=s3_bucket)
+        # 0件でなければ
+        if s3_list_objects['KeyCount'] != 0:
+            for s3_list_object in s3_list_objects['Contents']:
+                # フォルダ/ファイル名をappend
+                l_file.append(s3_list_object['Key'])
+        return l_file
+
+    def delete_file(self, file_name, s3_bucket):
+        self.s3_client.delete_object(Bucket=s3_bucket, Key=file_name)
