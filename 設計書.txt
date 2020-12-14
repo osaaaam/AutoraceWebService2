@@ -21,7 +21,6 @@ AutoraceWebService
                 change_rds_status.py（RDSの起動停止）
                 get_loading_s3.py（iOSアプリローディング_S3）
                 get_anaylize_s3.py（分析&ファイル生成_S3）
-                get_anaylize_result_s3（分析ファイル取得_S3）
             batch
                 monthly-1.py（RDS起動）
                 monthly-2.py（処理対象レース取得）
@@ -64,8 +63,6 @@ common
 ios
     anaylize
         └ get（get_anaylize_s3.py)
-        result
-            └ get（get_anaylize_result_s3.py)
     loading
         └ get（get_loading_s3.py)
 
