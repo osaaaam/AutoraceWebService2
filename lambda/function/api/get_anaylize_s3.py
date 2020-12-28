@@ -142,7 +142,7 @@ def lambda_handler(event, context):
             },
             'statusCode': 400,
             'body': json.dumps({
-                "message": str(e)
+                "message": message.Message.ios_err01
             })
         }
 
